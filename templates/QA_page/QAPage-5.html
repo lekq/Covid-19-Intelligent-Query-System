@@ -1,0 +1,43 @@
+{% extends "./RootTemplateWithHeaderFooter.html" %}
+
+{% block main_content %}
+    <div style="margin-bottom: 100px;margin-top: 100px;">
+        <div class="container" style="width: 60%;">
+            <ol class="breadcrumb border rounded-0 border-white" style="background: rgb(247,247,247);">
+                <li class="breadcrumb-item"><a href="/QA_page/start"><span style="color: rgb(0, 123, 255);">Home</span></a></li>
+                <li class="breadcrumb-item active"><span>Operations</span></li>
+            </ol>
+            <ul class="list-group border rounded-0 border-white" role="tabpanel" data-parent="#breadcrumb-1">
+                <li class="list-group-item" id="irrelevant">
+                    <p style="font-size: 18px;font-weight: bold;margin-bottom: 10px;margin-top: 5px;color: #212529;">How to Save Interested Articles in A Repository?</p>
+                    <ul style="font-size: 14px;margin-bottom: 15px;margin-top: 10px;">
+                        <li>Choose one query mode&nbsp;and decide your input type.&nbsp;</li>
+                        <li>View&nbsp;article&nbsp;preview&nbsp;to decide if&nbsp;it is pertinent to your line to&nbsp;research.</li>
+                        <li>Broaden or narrow down the searching&nbsp;according to&nbsp;the number of&nbsp;article&nbsp;return&nbsp;in the green strip on the top.&nbsp;</li>
+                        <li>Choose your filter preferences on the left panel.&nbsp;</li>
+                        <li>Click "Interested" to mark the articles you&nbsp;are going to save.&nbsp;</li>
+                        <li>Create a repository on the left panel with "New Repository".&nbsp;</li>
+                        <li>Click the "Repository Management" to save the interested articles in the corresponding repository.&nbsp;</li>
+                    </ul>
+                </li>
+                <li class="list-group-item" id="irrelevant-2">
+                    <p style="font-size: 18px;font-weight: bold;margin-bottom: 10px;margin-top: 5px;color: #212529;">How to Edit Repository?</p>
+                    <ul style="font-size: 14px;margin-top: 10px;margin-bottom: 15px;">
+                        <li>If you want to manage articles in the repository, please go to the panel on the left; if you want to manage the repository itself, please go to the “repository management” button on the upper right corner.&nbsp;</li>
+                        <li>View articles in a saved repository in the left panel.&nbsp;</li>
+                        <li>Clear&nbsp;articles&nbsp;in a repository in the left panel (<span style="font-weight: bold;"><strong>∅</strong></span>).</li>
+                        <li>Rename the repository name in the right panel (<i class="fa fa-gear"></i>).</li>
+                        <li>Delete the repository in the right panel (<i class="fa fa-close"></i>).</li>
+                    </ul>
+                </li>
+                <li class="list-group-item" id="irrelevant-1">
+                    <p style="font-size: 18px;font-weight: bold;margin-bottom: 10px;margin-top: 5px;color: #212529;"><strong>How to Download Articles?</strong></p>
+                    <ul style="font-size: 14px;margin-top: 10px;margin-bottom: 15px;">
+                        <li>Export PDFs: you can only export PDFs of all the articles in all the repositories you created,&nbsp;to do so&nbsp;please find the "Export all records" on the left panel.&nbsp;</li>
+                        <li>Download citations: please use the gray button in the title.&nbsp;</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}

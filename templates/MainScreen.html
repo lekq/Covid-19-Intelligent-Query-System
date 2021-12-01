@@ -1,0 +1,949 @@
+$def with (userName, localFiles,work_dir,ti,v_id,save_id,bg_value)
+
+<!DOCTYPE html>
+<title>COVID-19 Data Explorer</title>
+
+<html lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+		<meta name="description" content="">
+		<meta name="author" content="">
+		
+		<script type="text/javascript" src="/$work_dir/static/js/jquery-3.3.1.min.js"></script>
+		<script type="text/javascript" src="/$work_dir/static/js/jquery.blockUI.js"></script>
+		<script src="/$work_dir/static/js/bootstrap.min.js"></script>
+
+
+		<!-- Latest compiled and minified Bootstrap CSS -->
+		<link rel="stylesheet" href="/$work_dir/static/css/bootstrap.min.css">
+                <link rel="stylesheet" href="/$work_dir/static/css/vanillaSelectBox.css">
+                <script src="/$work_dir/static/js/vanillaSelectBox.js"></script>
+                
+                <style>
+                #chartdiv {
+                 width: 100%;
+                 height: 400px;
+                }
+
+
+                .slider {
+                 -webkit-appearance: none;
+  	 	 width: 100%;
+  		 height: 25px;
+  		 background: #d3d3d3;
+  		 outline: none;
+  		 opacity: 0.7;
+  		 -webkit-transition: .2s;
+  		 transition: opacity .2s;
+		}
+                .slider:hover {
+  			opacity: 1;
+		}
+
+		.slider::-webkit-slider-thumb {
+  			-webkit-appearance: none;
+  			appearance: none;
+  			width: 25px;
+  			height: 25px;
+  			background: #0000ff;
+  			cursor: pointer;
+			}
+
+		.slider::-moz-range-thumb {
+  			width: 25px;
+  			height: 25px;
+  			background: #0000ff;
+  			cursor: pointer;
+		} 
+                </style>
+                <script>
+               
+                function get_ptype(){
+                  var checkboxes = document.getElementsByName('ptype');
+                  for (var checkbox of checkboxes) {
+                  if (checkbox.checked)
+                    writeTable();
+                   }
+                 
+                } 
+                function get_value(){
+                 chart_enable(document.getElementById("link_section").value);  
+                }
+		</script>
+                 <!-- Resources -->
+                <script src="https://www.amcharts.com/lib/4/core.js"></script>
+                <script src="https://www.amcharts.com/lib/4/charts.js"></script>
+                <script src="https://www.amcharts.com/lib/4/plugins/wordCloud.js"></script>
+                <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+                <script>
+
+               function chart_enable(subject){
+
+                document.getElementById("link_section").value=subject;
+
+		am4core.ready(function() {
+                // Themes begin
+                am4core.useTheme(am4themes_animated);
+                // Themes end
+
+		var chart = am4core.create("chartdiv", am4plugins_wordCloud.WordCloud);
+		chart.fontFamily = "Courier New";
+		var series = chart.series.push(new am4plugins_wordCloud.WordCloudSeries());
+		series.randomness = 0.1;
+		series.rotationThreshold = 0.5;
+                
+                //get device tag info (cd,symp,device,target)
+                var file1='/$work_dir/static/process/'+subject+'.txt';
+
+                var limit=document.getElementById("threshold").value;
+              
+                var result=''
+                var device_tags = [];
+
+                var rawFile = new XMLHttpRequest();
+                rawFile.open("GET", file1, false);
+                rawFile.onreadystatechange = function ()
+                 { 
+                  if(rawFile.readyState === 4)
+                  { 
+                   if(rawFile.status === 200 || rawFile.status == 0)
+                    {
+                     var allText = rawFile.responseText;
+                     result= allText.split("\n");
+                     for (i = 0; i < result.length; i++) {
+                       var result1=result[i].split(':')
+                       var dtag=result1[0];
+                       var count=result1[1];
+                       if (count>limit){
+                        device_tags.push({
+                           tag:dtag,
+                           count:count
+                        });
+                      }    
+                     }                     
+                    }
+                  }
+                 }
+                rawFile.send(null);
+
+                //input data into cloud                 
+                series.data=device_tags;
+
+		series.dataFields.word = "tag";
+		series.dataFields.value = "count";
+
+		series.heatRules.push({
+ 		"target": series.labels.template,
+ 		"property": "fill",
+ 		"min": am4core.color("#0000CC"),
+ 		"max": am4core.color("#CC00CC"),
+ 		"dataField": "value"
+		});
+
+		series.labels.template.url = "?tag={word}&fi="+subject;
+		series.labels.template.urlTarget = "_blank";
+		series.labels.template.tooltipText = "{word}: {value}";
+
+		var hoverState = series.labels.template.states.create("hover");
+		hoverState.properties.fill = am4core.color("#FF0000");
+
+		var subtitle = chart.titles.create();
+		subtitle.text = "(click tag to open)";
+
+		var title = chart.titles.create(); //(cd,symp,device,target)
+
+                if (subject=='device')
+		 title.text = "Popular DEVICE-related Tags @ COVID-19 Dataset";
+              
+                else if (subject=='cd')
+                 title.text = "Popular CHEMICALS & DRUGS-related Tags @ COVID-19 Dataset";
+
+                else if (subject=='symp')
+                 title.text = "Popular CONDITION-related Tags @ COVID-19 Dataset";
+
+                else if (subject=='target')
+                 title.text = "Popular TARGET-related Tags @ COVID-19 Dataset";
+
+		title.fontSize = 20;
+		title.fontWeight = "800";
+
+		 }); // end am4core.ready()
+                } 
+                </script>
+
+                <style>
+			body {
+			padding-top: 1em;
+			}	
+			
+			section {
+				padding: 70px 0;
+				border-bottom: 1px dotted #ccc;
+			}
+
+			/* So that we can see the grid */
+			.grid-example  div[class^="col"] {
+				border: 1px solid white;
+				background: white;
+				text-align: center;
+				padding-top: 8px;
+				padding-bottom: 8px;
+				}
+			/* Overide Jumbotron's color */
+			.jumbotron {
+			background-color: lightskyblue;
+              	       }
+                       table.sortable thead {
+     background-color:#eee;
+     color:#666666;
+     font-weight: bold;
+     cursor: default;
+     } 
+		</style>
+        <script>
+  
+        function downloadCSV(csv, filename) {
+           var csvFile;
+           var downloadLink;
+
+           // CSV file
+           csvFile = new Blob([csv], {type: "text/csv"});
+
+           // Download link
+           downloadLink = document.createElement("a");
+
+           // File name
+            downloadLink.download = filename;
+
+           // Create a link to the file
+            downloadLink.href = window.URL.createObjectURL(csvFile);
+
+           // Hide download link
+           downloadLink.style.display = "none";
+
+           // Add the link to DOM
+           document.body.appendChild(downloadLink);
+
+           // Click download link
+            downloadLink.click();
+         }
+
+        function check_relevance() {
+          var selected = {};
+          var group={};
+          
+          var inputTags = document.getElementsByTagName('select');
+          for(var i=0;i<inputTags.length;i++){
+              var s_id=inputTags[i].id;
+              
+              if (s_id.includes('relevance')){
+                  var r_id=s_id.split("_");
+                  for (var option of document.getElementById(s_id).options) {
+                    if (option.selected & option.value>0) {
+                      selected[r_id[1]]=option.value;
+                    }
+                  }
+                }
+              }       
+                  if ((Object.keys(selected).length<3 ) && document.getElementById("del_no").value==''){
+                     alert ("You have to select at least 3 items in the 'Relevant' section!");
+                     return false;    
+                  }else{
+                    var sels="";
+                    Object.keys(selected).forEach(function(key) {
+                      sels+=key+"_"+selected[key]+"||";
+                    });
+                    sels=sels.substring(0,sels.length-1);
+                    document.getElementById("all_sels").value=sels; 
+
+                    var groups="";
+                    Object.keys(group).forEach(function(key) {
+                      groups+=key+"_"+group[key]+"||";
+                    });
+                    groups=groups.substring(0,groups.length-1);
+                    document.getElementById("all_groups").value=groups;
+                    var s_count = document.getElementById("save_record");
+                    var count=0;
+                    var s_index=0
+                    for (var i = 1; i < s_count.length; i++) {
+                     if (s_count.options[i].selected){
+                        s_index=i;
+                        count+=1;
+                      }
+                     }
+                    if (count==1){
+                      document.getElementById("current_sid_uid").value=s_count.options[s_index].text;
+                      
+                    }
+                    else if (count>1){
+                      alert("You can only update one record!");
+                      return false;
+                    }
+                    document.getElementById("save_form").target = "_self";   
+
+                  } 
+                  
+
+          }
+
+         function tag_div(divid) {
+            
+            if (document.getElementById(divid).style.display=="none") {
+             document.getElementById(divid).style.display="block";
+             if (divid=='querydiv'){
+               document.getElementById('chartdiv').style.display="none";
+               document.getElementById('th_div').style.display="none";}
+             else{
+               document.getElementById('querydiv').style.display="none"; 
+               document.getElementById('th_div').style.display="block";}
+            }else{
+             document.getElementById(divid).style.display="none";
+             if (divid=='chartdiv'){
+               document.getElementById('chartdiv').style.display="block";
+               document.getElementById('th_div').style.display="block";
+             }
+             else{
+               document.getElementById('querydiv').style.display="block";
+              document.getElementById('th_div').style.display="none";
+            }
+           } 
+         }
+         function bookmark_div() {
+
+            if (document.getElementById("bookmark_section").style.display=="none") {
+             document.getElementById("bookmark_section").style.display="block";
+            }else{
+             document.getElementById("bookmark_section").style.display="none";
+            }
+          }
+
+
+         function bookmark_div1() {
+
+             document.getElementById("bookmark_section").style.display="block";
+          }
+
+
+         function selected_options() {
+          var selected = [];
+          var count=0;
+           for (var option of document.getElementById('terms').options) {
+            if (option.selected) {
+             selected.push(option.value);
+             count+=1;
+            }
+          }
+           if (count<1){
+             alert ('Please select at least 1 term!');
+             return false;
+           }
+ 
+          }
+
+
+         function id_filter(){
+          var s_count = document.getElementById("save_record");
+          var count=0;
+          var sum_no_list="";
+          for (var i = 1; i < s_count.length; i++) {
+            if (s_count.options[i].selected)
+             count+=1;
+          }
+          if (count<1){
+             //alert("No ids will be excluded!");
+          }else{
+          
+             for (var i = 0; i < s_count.length; i++) {
+               if (s_count.options[i].selected){
+                var toc = s_count.options[i].text;
+
+                var file_value=toc.split("_");
+                var sum_no=file_value[3];
+                sum_no_list=sum_no_list+sum_no+",";
+               }
+             }
+                 
+                document.getElementById("eid_list").value=sum_no_list.substring(0,sum_no_list.length-1);
+                
+            }
+
+                submit_sel_check(); //check what has input and update section hint
+          }
+
+
+
+
+        function update_submit()
+        {
+          var s_count = document.getElementById("save_record");
+          var count=0;
+          for (var i = 0; i < s_count.length; i++) { 
+            if (s_count.options[i].selected) 
+             count+=1;
+          }
+           
+          if (count>=2){
+             alert("Please select only one saved record!");
+             return false;
+
+          }else{
+           var i_value=document.getElementById("save_record").selectedIndex;
+          
+           if (i_value==0){
+             alert("Please select one saved record!");
+             return false;
+ 
+           }else{
+            var e = document.getElementById("save_record");
+            var toc = e.options[e.selectedIndex].text;
+            var file_value=toc.split("_");
+            if (file_value[2]=='999998'){ //free text query
+             document.getElementById("id").value=file_value[2]+"_"+file_value[3];
+             
+            }else{  
+             document.getElementById("id").value=file_value[2]; //other
+            }
+             document.getElementById("sid").value=file_value[3]; 
+           if (file_value[2].length==8){
+             document.getElementById("subject").selectedIndex=0;
+           }
+           else if (file_value[2]=='999998'){ //for free text
+             document.getElementById("subject").selectedIndex=2;
+           }
+           else{
+            document.getElementById("subject").selectedIndex=1;
+           }
+           document.getElementById('query_form').submit();
+          }
+         }
+        }
+
+        function delete_submit()
+        {
+          var s_count = document.getElementById("save_record");
+          var count=0;
+          var del_no_list='';
+          for (var i = 1; i < s_count.length; i++) {
+            if (s_count.options[i].selected)
+             count+=1;
+          }
+          if (count<1){
+             alert("You have to select one saved record!");
+             return false;
+ 
+          }else{
+             for (var i = 1; i < s_count.length; i++) {
+               if (s_count.options[i].selected){ 
+                 var toc = s_count.options[i].text;
+                 var file_value=toc.split("_");
+                 var del_no=file_value[3];
+                 del_no_list+=del_no+",";
+               }
+             }
+             document.getElementById("del_no").value=del_no_list.substring(0,del_no_list.length-1);
+             //alert(document.getElementById("del_no").value);
+             document.getElementById("save_form").target = "_self";
+             document.getElementById('save_form').submit();
+              
+          }
+        }
+
+        function sum_submit()
+        {
+          var s_count = document.getElementById("save_record");
+          var count=0;
+          var sum_no_list="";
+          for (var i = 1; i < s_count.length; i++) {
+            if (s_count.options[i].selected)
+             count+=1;
+          }
+          if (count<1){
+             alert("You have to select at least one file for text summarization!");
+             return false;
+
+          }
+          else if(s_count.options[0].selected){
+             alert("First option is not allowed for text summarization!");
+             return false;
+          }
+          else{
+             for (var i = 0; i < s_count.length; i++) {
+               if (s_count.options[i].selected){
+                var toc = s_count.options[i].text;
+                
+                var file_value=toc.split("_");
+                var sum_no=file_value[3];
+                sum_no_list=sum_no_list+sum_no+","; 
+               }
+             }
+               
+              sum_no_list=sum_no_list.substring(0,sum_no_list.length-1);
+              //alert(sum_no_list); 
+              document.getElementById("sum_no").value=sum_no_list;
+              document.getElementById("save_form").target = "_blank";
+              document.getElementById('save_form').submit(); 
+         }
+       }
+
+        function clean_id_value()
+           {
+                  document.getElementById("title").innerHTML="Welcome to use our search enginee";
+                  document.getElementById("id").value='';
+                  if (document.getElementById("subject").selectedIndex==2){
+                     document.getElementById("id").placeholder="COVID-19 risk factors for Neonates and pregnant women"
+                  }
+                  else if (document.getElementById("subject").selectedIndex==0){
+                     document.getElementById("id").placeholder="32189081"
+                  }
+                  else if (document.getElementById("subject").selectedIndex==1){
+                     document.getElementById("id").placeholder="888"
+                  }
+
+           }
+
+ 
+        function option_value()
+           {
+                  var e = document.getElementById("topic_detail");
+                  var toc = e.options[e.selectedIndex].text;
+                  document.getElementById("topic_content").value=toc;
+           }
+
+        function reset_topic()
+           {
+                  location.reload();
+                  document.getElementById("topic_detail").selectedIndex=0;
+           }
+
+
+      function check_num(inputtxt)
+      {
+       if(inputtxt>0)
+        {
+         return true;
+        }else{
+         return false;
+
+       }
+      }
+
+       function submit_sel_check()
+       {
+            var d_value=document.getElementById("id").value;
+            if(check_num(d_value)){
+               if (document.getElementById("id").value.length==8){
+                document.getElementById("subject").selectedIndex=0;
+               }
+               else if (document.getElementById("id").value=='999998'){
+                document.getElementById("subject").selectedIndex=2;
+               }
+
+               else{
+                document.getElementById("subject").selectedIndex=1;
+               }
+            }
+            else if (document.getElementById("id").value=='') //default is pubmed id
+               document.getElementById("subject").selectedIndex=0;
+            else
+               document.getElementById("subject").selectedIndex=2; 
+       }
+
+       function update_selection()
+         {
+           
+            submit_sel_check();
+ 
+            document.getElementById("current_aid").value=document.getElementById("id").value;
+            document.getElementById("sid").value=$save_id;
+
+            var group = document.query_form.b_group;
+                 if (group[0].checked){
+                   if (group[0].value!='$bg_value'){
+                      group[1].checked=true;
+                   }
+                 }else{
+                    if (group[1].value!='$bg_value'){
+                      group[0].checked=true;
+                   }
+                 }
+
+        }
+
+       function download_file(){
+           var x = document.getElementById("format_detail").value;
+          
+           if (x=="csv"){
+             var csv = [];
+               var rows = document.querySelectorAll("table tr");
+    
+                for (var i = 0; i < rows.length; i++) {
+                   var row = [], cols = rows[i].querySelectorAll("td, th");
+        
+                for (var j = 0; j < cols.length; j++) 
+                 if (j==0 || j==1){
+                   row.push(cols[j].innerText);
+                 }
+                 csv.push(row.join(","));        
+              }
+
+               var Covid_filename="Covid_19_review.csv";
+               // Download CSV file
+               downloadCSV(csv.join("\n"), Covid_filename);
+
+
+           }else 
+           { alert('error');
+           }
+       }   
+        </script>
+	</head>
+	<body onclick="myFunction(event)" onload="update_selection()">
+		<div class="container-fluid">
+				
+		<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#nav-content" aria-controls="nav-content" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+
+			<!-- Brand -->
+			<a class="navbar-brand" href="#"><img src="/$work_dir/static/js/uc_logo.png" width="200" height="56"></a>
+
+			<div class="collapse navbar-collapse justify-content-end" id="nav-content">   
+				<ul class="navbar-nav">
+					<li class="nav-item">
+						<a class="nav-link" href="#">COVID-19 Open Research Dataset Explorer</a>
+					</li>
+					</li>
+				</ul>
+			</div>
+			<div class="collapse navbar-collapse justify-content-end" id="nav-content">   
+				<ul class="navbar-nav">
+					<li class="nav-item">
+						<a class="nav-link disabled" href="#">Welcome $userName</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/$work_dir/Logout">Logout</a>
+					</li>
+				</ul>
+			</div>
+		</nav>
+
+		</div>
+		
+		</br></br>
+		<div class="container-fluid"> 
+				<div class="grid-example"><a href="javascript:tag_div('querydiv');">Query</a> || <a href="javascript:tag_div('chartdiv');chart_enable('symp');">Condition</a> || <a href="javascript:tag_div('chartdiv');chart_enable('cd');">Chemicals & drugs</a> || <a href="javascript:tag_div('chartdiv');chart_enable('target');">Target</a> || <a href="javascript:tag_div('chartdiv');chart_enable('device');">Devices</a>
+					<div class="row">
+                                                <input type='hidden' id='link_section'>
+						<div class="col-lg-3"><div id='th_div' style='display:none'><label class="mr-sm-1 mb-0">Threshold: </label><input type="number" id='threshold' min="2" max="10" value="2" onchange='get_value()';></div></div><div class="col-lg-7" id='querydiv' style='display:block'><p><p>
+                                                <form class="form" name="query_form" id="query_form" method="POST" enctype="multipart/form-data" onsubmit="return getParam()">
+                                                <label class="mr-sm-1 mb-0" id='title' name="title">$ti</label><p>
+                                                <select name="subject" id="subject" onchange="clean_id_value()"><option value='pmid' selected>PMID</option><option value='aid'>Article ID</option><option value='qstr'>Query</option></select>
+                                                <input type="text" id="id" name="id" value="$v_id" maxlength="60" size="50" placeholder="32189081">
+                                                <input type="hidden" id="sid" name="sid">
+                                                <input type="hidden" id="eid_list" name="eid_list">
+                                                <button type="submit" class="btn btn-primary mt-2 mt-sm-0" id="load_btn" onclick="id_filter()">Query</button>
+                                                <button type="reset" class="btn btn-primary mt-2 mt-sm-0" id="reset_btn" onclick="reset_topic()">Reset</button> <a href="#" onclick="bookmark_div()">Advanced</a><br> New Query <input type="radio" name="b_group" value="yes" checked> Yes <input type="radio" name="b_group" value="no"> No 
+                                                <br><label class="mr-sm-1 mb-0" id="total_count"> 0/0 (View/Total)</label>
+						</form></div> <div id="chartdiv" style='display:none'></div>
+					</div>
+                                        <div class="row" >
+                                                <div class="col-lg-4" style='display:none' id="bookmark_section" name="bookmark_section">
+                                                       <form class="form" id="save_form"  method="POST" enctype="multipart/form-data" onsubmit="return check_relevance()"> 
+                                                        <label class="mr-sm-1 mb-0"  >Bookmark:</label>
+                                                        <select class="custom-select" name="save_record" id="save_record" multiple>
+                                                                <option >Choose one option</option>
+                                                        </select>
+                                                        <input type="hidden" id="all_sels" name="all_sels" value="3487">
+                                                        <input type="hidden" id="all_groups" name="all_groups" value="5678">
+                                                        <input type="hidden" id="current_aid" name="current_aid">
+                                                        <input type="hidden" id="current_sid_uid" name="current_sid_uid">
+                                                        <input type="hidden" id="del_no" name="del_no"><br>
+                                                        <input type="hidden" id="sum_no" name="sum_no"><br>
+                                                        <input type="radio" name="s_group" value="private" checked> Private <input type="radio" name="s_group" value="public">Public
+                                                              <p><button type="submit" class="btn btn-primary mt-2 mt-sm-0" id="save_btn">Save</button>
+                                                              <button type="button" class="btn btn-primary mt-2 mt-sm-0" id="submit_btn" onclick="update_submit();">Load</button>
+                                                              <button type="button" class="btn btn-primary mt-2 mt-sm-0" id="del_btn" onclick="delete_submit();">Delete</button>
+                                                              <button type="button" class="btn btn-primary mt-2 mt-sm-0" id="sum_btn" onclick="sum_submit();" >Summarize</button>
+
+                                               </div>
+                                               <div class="col-lg-6"></div>
+                                               <div class="col-lg-6">
+                                               <label> Publication Type: &nbsp;&nbsp;</label><input type='checkbox' name='ptype' value='ALL' onclick="get_ptype()" checked> <label> ALL </label>&nbsp;  <input type='checkbox'  name='ptype' onclick="get_ptype()" value='Journal Article'><label> Journal Article </label> &nbsp;<input type='checkbox' name='ptype' onclick="get_ptype()" value='Letter'><label> Letter </label>&nbsp;<input type='checkbox' name='ptype' onclick="get_ptype()" value='Editorial'><label> Editorial </label>&nbsp;<input type='checkbox' name='ptype' onclick="get_ptype()" value='Journal Article;Review'><label> Review </label>&nbsp;<input type='checkbox' name='ptype' onclick="get_ptype()" value='Preprint'><label> Preprint </label>
+
+
+                                               </div>
+
+                                        </div>
+				</div>
+		</div>
+		<div id='data_table' style='margin:20px;'>
+			<!-- data table content-->
+		</div></form>
+	</body>
+</html>
+
+<script language="javascript" type="text/javascript">
+
+	
+             jQuery(document).ready(function(){
+ 
+
+      	       // initialization
+		jQuery(function () {
+		  jQuery('[data-toggle="tooltip"]').tooltip()
+		})
+
+		// Initialize popover component
+		jQuery(function () {
+		  jQuery('[data-toggle="popover"]').popover()
+		})
+
+		//custom actions
+		jQuery('#customFile').on('change',function(){
+            //get the file name
+            var fileName = jQuery(this).val();
+            //replace the "Choose a file" label
+            jQuery(this).next('.custom-file-label').html(fileName);
+        });
+        writeTable();
+		jQuery('#task_name').on('change',function(){
+			        var stts = this.value;
+                                jQuery("#task_detail").show();
+                                jQuery("#task_content").show();
+                                jQuery("#topic_label").show();
+                                jQuery("#topic_detail_label").show();
+                                jQuery("#topic_detail").show();
+		});
+                 
+                jQuery('#topic_detail').on('change',function(){
+                        option_value();
+                        document.getElementById('total_count').innerHTML = "";
+                        var stts = this.value;
+                                jQuery("#topic_label").show();
+                                jQuery("#topic_content").show();
+                                jQuery("#submit_btn").show();
+                                jQuery("#save_btn").hide();
+                                jQuery("#format_detail").hide();
+                });
+ 
+
+
+	});
+
+	// custom funcitons
+	function getParam() {
+                
+                	
+		//var site = jQuery('#upload_site option:selected').val();
+		var aid = jQuery('#id').val(); //alert(id);
+		if (aid == "") {
+			alert("Please input query content!");
+			jQuery('#id').focus();
+			return false;
+		} 
+
+                var s_count = document.getElementById("save_record");
+                if (s_count.options[0].selected){
+                  alert("First option is not ready to be used!");
+                  return false;
+               }
+
+		jQuery.blockUI({ message: '<h3>Just a moment...</h3>', css: { padding:'10px 5px'} });
+		return true;
+	}
+
+
+
+        function myFunction(event) { 
+            e_id="a_"+event.target.id;
+            if (document.getElementById(e_id).style.display=="block"){
+             document.getElementById(e_id).style.display="none";
+             document.getElementById("id").value=event.target.id;
+             document.getElementById("subject").selectedIndex=1; 
+             document.getElementById("title").innerHTML="Welcome to use our search enginee"; 
+            }else{
+             document.getElementById(e_id).style.display="block";
+             document.getElementById("id").value=event.target.id;
+             document.getElementById("subject").selectedIndex=1;
+             document.getElementById("title").innerHTML="Welcome to use our search enginee";
+            }
+          }
+
+ 
+	function writeTable() {
+           var fileTable = "<table class='table table-hover' id='myTable' style='width:100%'><thead class='thead-light'><tr><th>Article ID</th><th>Score</th><th>Summary</th><th>Relevant</th></tr></thead>";
+                var index = 0;
+                var limit = 30;                 
+                var values = Object.values($:localFiles);
+                var abs_arr = [];
+                var yes_count=0;
+                var no_count=0;
+                var yes_list=[];
+                var no_list=[];
+                var processed=0;
+                var sel_index=0;
+                var loop_index=0;
+
+                var record_menu = document.getElementById("save_record"); //remove menu items then add items later
+                record_menu.innerHTML=null;
+                var option = document.createElement("option");
+                option.text = "Choose one option"
+                record_menu.add(option);
+                
+                for (var key in $:localFiles) {
+                                                      
+                            if (values[sel_index].indexOf("@@") !=-1 & processed==0){ //if random
+                             
+                              processsed=1;
+                              sels=values[sel_index].split("@@"); 
+                              for (var i=0;i<sels.length;i++){ //for
+                                if (sels[i]){
+                                 var sel_list=sels[i].split('-');
+                                 var q_aid=sel_list[0]; //
+                                 var sid=sel_list[5];//
+                                 search_field=document.getElementById("id").value;
+                                 if (search_field.indexOf("_") !=-1){
+                                     search_field=search_field.split("_")[0];
+                                     } 
+
+                                 if (q_aid==search_field & sid==document.getElementById("sid").value){ //get relevant based on article id and system id     
+                                   var rel_list=sel_list[1];
+                                   var rel_items=rel_list.split("||");
+    
+                                   for (var j=0;j<rel_items.length;j++){
+                                    var items=rel_items[j].split("_");
+
+                                    var id=items[0];//
+                                    var relevance=items[1];//
+  
+                                    if (relevance==1){
+                                     yes_list[yes_count]=id;
+                                     yes_count+=1;
+                                    }else{
+                                     no_list[no_count]=id;
+                                     no_count+=1;
+                                    } 
+                                   }
+                                 }
+                                 var pub_view=sel_list[2];//
+                                 var dept=sel_list[3];//
+                                 var uid=sel_list[4];//
+                               
+                                 var option = document.createElement("option");
+                                 option.text = dept+"_"+uid+"_"+q_aid+"_"+sid
+                                 record_menu.add(option);
+                              }//for
+                              
+                            } //if
+                              sel_index+=1;
+                           } //if
+                            
+                         }
+                   let mySelect = new vanillaSelectBox("#save_record",{
+                                       maxWidth: 1000,
+                                       maxHeight: 1000
+
+                               });
+
+                   for (var key in $:localFiles) {
+
+                            if (values[loop_index].indexOf("@@") ==-1){
+                                
+                                var content = values[loop_index].split("<p><p>");
+                                var score1=content[0].split("##");
+                                var score=parseFloat(score1[0]);
+                                var abs=content[1];
+                                var title=score1[1];
+                                var abstract_id=key;
+                                           
+                                abs_arr[index]={id:abstract_id, score:score, title:title,abstract:abs};
+                                index++; 
+                               } 
+                            loop_index++;
+
+                      }
+                     
+                     function includes(k) {
+                       for(var i=0; i < this.length; i++){
+                        if( this[i] === k || ( this[i] !== this[i] && k !== k ) ){
+                         return true;
+                        }
+                      }
+                         return false;
+                     } 
+
+                     var end=0;
+                     abs_arr1=abs_arr.sort((a, b) => (a.score < b.score) ? 1 : -1)
+                     if (index>=limit){
+                       end=limit;}
+                     else{
+                       end=index;}
+                     
+                     var show_count=0; 
+                     for (i=0;i<end;i++){ 
+                         var abstract_id=abs_arr1[i].id;
+                         var score=abs_arr1[i].score;
+                         var title=abs_arr1[i].title;
+                         
+                         var ptype_list=""; 
+                         var checkboxes = document.getElementsByName('ptype');
+                         for (var checkbox of checkboxes) {
+                         if (checkbox.checked){
+                           var pub_type=checkbox.value;
+                           ptype_list+=pub_type+" ";
+                          }
+                         }
+                         var title1=title.indexOf('>');
+                         var title2=title.substring(1,title.length);
+                         var title3=title2.indexOf('<');
+                         
+                         var ptype_title=title.substring(title1+1,title3-1); 
+                         if (ptype_list.indexOf(ptype_title) !=-1 || ptype_list.indexOf('ALL') !=-1){
+                          show_count+=1;
+                          var abs=abs_arr1[i].abstract;
+                          if (abs.indexOf('None') !=-1){
+                           title=abs_arr1[i].title+" (No Abstract)";
+                          }   
+                          var s_id="relevance_"+abstract_id;
+                          var g_id="group_"+abstract_id;
+                  
+                          fileTable += "<tbody><tr>";
+                          fileTable += "<td width='5%'>" + abstract_id + "</td>";
+                          fileTable += "<td width='5%'>" + score + "</td>";
+                          var inputVal = document.getElementById("id").value;
+                          
+                          if (yes_list.includes(abstract_id)){
+                            fileTable += "<td width='80%'><label class='mr-sm-1 mb-0' id='"+abstract_id+"'>"+title+"</label><p><p><label class='mr-sm-1 mb-0' id='a_"+abstract_id+"' style='display:none'>"+abs+"</label> </td>";
+
+                            fileTable += "<td width=5%><select id="+s_id+" value='0' onchange='bookmark_div1()'><option ></option><option value='1' selected>Yes</option><option value='2'>No</option></select></td>";
+                          }
+                          else if (no_list.includes(abstract_id)){
+                           fileTable += "<td width='80%'><label class='mr-sm-1 mb-0' id='"+abstract_id+"'>"+title+"</label><p><p><label class='mr-sm-1 mb-0' id='a_"+abstract_id+"' style='display:none'>"+abs+"</label> </td>";
+                           fileTable += "<td width=5%><select id="+s_id+" value='0' onchange='bookmark_div1()'><option ></option><option value='1' >Yes</option><option value='2' selected>No</option></select></td>";
+                          }
+                          else if (inputVal.indexOf('tag') !=-1){ 
+                            fileTable += "<td width='80%'><label class='mr-sm-1 mb-0' id='"+abstract_id+"'>"+title+"</label><p><p><label class='mr-sm-1 mb-0' id='a_"+abstract_id+"' style='display:none'>"+abs+"</label> </td>";
+                            fileTable += "<td width=5%>Reference only</td>";
+                          }
+
+                          else{
+                           fileTable += "<td width='80%'><label class='mr-sm-1 mb-0' id='"+abstract_id+"'>"+title+"</label><p><p><label class='mr-sm-1 mb-0' id='a_"+abstract_id+"' style='display:none'>"+abs+"</label> </td>";
+                           fileTable += "<td width=5%><select id="+s_id+" value='0' onchange='bookmark_div1()'><option ></option><option value='1'>Yes</option><option value='2'>No</option></select></td>"; 
+                          }
+                          fileTable += "</tr>";
+                         }
+                      }
+                if (index==2) 
+                 document.getElementById('total_count').innerHTML = show_count+"/"+index+" (View/Total)";
+                else
+                 document.getElementById('total_count').innerHTML = show_count+"/"+(loop_index-1)+" (View/Total)";
+
+                fileTable += "</tbody></table>";
+                jQuery('#data_table').html(fileTable);
+                              
+	}
+</script>

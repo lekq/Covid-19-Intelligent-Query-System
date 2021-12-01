@@ -1,0 +1,29 @@
+{% extends "./RootTemplateWithHeaderFooter.html" %}
+
+{% block main_content %}
+    <div style="margin-bottom: 100px;margin-top: 100px;">
+        <div class="container" style="width: 60%;">
+            <ol class="breadcrumb border rounded-0 border-white" style="background: rgb(247,247,247);">
+                <li class="breadcrumb-item"><a href="/QA_page/start"><span style="color: rgb(0, 123, 255);">Home</span></a></li>
+                <li class="breadcrumb-item active"><span>Q&amp;A</span></li>
+            </ol>
+            <ul class="list-group border rounded-0 border-white" role="tabpanel" data-parent="#breadcrumb-1">
+                <li class="list-group-item" id="irrelevant">
+                    <p style="font-size: 18px;font-weight: bold;margin-bottom: 10px;margin-top: 5px;color: #212529;">Why the relevance of the articles I found are low?</p>
+                    <ul style="font-size: 14px;margin-top: 10px;margin-bottom: 15px;">
+                        <li>Please note that the ID searching permits numbers only, don't add any alphabets or colons.</li>
+                        <li>Please report your specific problem via Comment/Issue Report on the top right corner.&nbsp;<a href="#">Contact</a><br></li>
+                    </ul>
+                </li>
+                <li class="list-group-item" id="irrelevant-2">
+                    <p style="font-size: 18px;font-weight: bold;margin-bottom: 10px;margin-top: 5px;color: #212529;">Are these articles the same?</p>
+                    <p style="margin-bottom: 15px;font-size: 14px;margin-top: 10px;">You will find that sometimes the recommended articles are duplicated, and there&nbsp;are two&nbsp;possible&nbsp;reasons for this:&nbsp; &nbsp;</p>
+                    <ul style="font-size: 14px;margin-top: 10px;margin-bottom: 15px;">
+                        <li>One version could be pre-print, and the other can be an official publication.&nbsp;</li>
+                        <li>In some cases, the same article can be registered under different DOC IDs. This is&nbsp;because&nbsp;the program is still in its developing stages, and it will gradually be fixed in future developments.<br></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}

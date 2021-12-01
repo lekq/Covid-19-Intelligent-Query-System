@@ -1,0 +1,76 @@
+{% extends "./RootTemplateWithHeaderFooter.html" %}
+
+{% block main_content %}
+
+    <div style="margin-bottom: 100px;margin-top: 100px;">
+        <div class="container" style="width: 60%;">
+            <ol class="breadcrumb border rounded-0 border-white" style="background: #f7f7f7;">
+                <li class="breadcrumb-item"><a href="/QA_page/start"><span style="color: rgb(0, 123, 255);">Home</span></a></li>
+                <li class="breadcrumb-item active"><span>Strength</span></li>
+            </ol>
+            <ul class="list-group border rounded-0 border-white" role="tabpanel" data-parent="#breadcrumb-1">
+                <li class="list-group-item" id="irrelevant">
+                    <p style="font-size: 18px;font-weight: bold;margin-bottom: 10px;margin-top: 5px;color: #212529;">ID Query Mode</p>
+                    <p style="margin-bottom: 15px;font-size: 14px;margin-top: 10px;">Already have a related article and want to find out&nbsp;other&nbsp;articles related&nbsp;to it? Try out the ID&nbsp;query. Copy and paste the PMID or DOC ID of the input article. Watch for what you paste in the searching bar, only numbers allowed. E.g.:&nbsp;</p>
+                    <picture><img src="static/assets/img/Screen%20Shot%202021-07-08%20at%203.16.26%20PM.png" style="width: 100%;"></picture>
+                </li>
+                <li class="list-group-item" id="irrelevant-2">
+                    <p style="font-size: 18px;font-weight: bold;margin-bottom: 10px;margin-top: 5px;color: #212529;">4 Types of Search: Query Mode * Input</p>
+                    <p style="margin-bottom: 15px;font-size: 14px;margin-top: 10px;">The IQS has 4 types of query modes, depending on the query mode (term/concept) and the input (keyword/document ID). You should start your search by:</p>
+                    <div class="table-responsive" style="font-size: 14px;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 20%;"></th>
+                                    <th style="width: 40%;">Keyword input&nbsp;(watch out the input)&nbsp;</th>
+                                    <th style="width: 40%;">ID input&nbsp;(watch out the input)&nbsp;</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Term Query</strong><br>(select one mode&nbsp;button at the search box)&nbsp;</td>
+                                    <td>1) Select 'Term' button.&nbsp;&nbsp;<br>2) Enter a query string that is not a number&nbsp;in this query mode.&nbsp;</td>
+                                    <td>1) Select 'Term' button.&nbsp;&nbsp;<br>2) Enter a query string that is not a number&nbsp;in this query mode.&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Concept Query</strong><br>(select one mode button at the search box)&nbsp;</td>
+                                    <td>1) Select 'Concept' button.&nbsp;&nbsp;<br>2) Enter a number&nbsp;(DOC ID or PMID of an article).&nbsp;</td>
+                                    <td>1) Select 'Concept' button.&nbsp;&nbsp;<br>2)&nbsp;Enter a number&nbsp;(DOC ID or PMID of an article).&nbsp;</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </li>
+                <li class="list-group-item" id="irrelevant-1">
+                    <p style="font-size: 18px;font-weight: bold;margin-bottom: 10px;margin-top: 5px;color: #212529;"><strong>4 Types of Search Results</strong></p>
+                    <div class="table-responsive" style="font-size: 14px;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 20%;"></th>
+                                    <th style="width: 40%;">Keyword Input</th>
+                                    <th style="width: 40%;">ID Input</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Term Query</strong></td>
+                                    <td>Documents with the most keywords in their titles and abstracts in common with the keywords in the entered query string.&nbsp;</td>
+                                    <td>The IQS concatenates all words in the title and abstract of the input document to generate a big query string. Documents with the most keywords in their titles and abstracts in common with that of the input document will be your search results.&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Concept Query</strong></td>
+                                    <td>This mode is currently not supported because parsing the entered query string through&nbsp;<span style="text-decoration: underline;">Metamaplite</span>&nbsp;takes too much time.&nbsp;The matching process is the same as “Term&nbsp;mode, keyword input”, except the entered query string is parsed through&nbsp;<span style="text-decoration: underline;">Metamaplite</span>, and generated medical concepts are&nbsp;used as a&nbsp;transitional&nbsp;query string.</td>
+                                    <td>The matching process is the same as “Term mode, ID input”,&nbsp;except the title and abstract of the input&nbsp;document are parsed through&nbsp;<span style="text-decoration: underline;">Metamaplite</span>, and generated medical concepts are used as the new query string. This mode is supported because all documents have been pre-parsed through&nbsp;<span style="text-decoration: underline;">Metamaplite</span>,&nbsp;saving&nbsp;response&nbsp;time after you click&nbsp;the&nbsp;search button.&nbsp;</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+
+

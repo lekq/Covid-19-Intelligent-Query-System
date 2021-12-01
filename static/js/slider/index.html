@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <link rel="stylesheet" href="rzslider.css" />
+    <link data-require="bootstrap@3.3.7" data-semver="3.3.7" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <script data-require="angular.js@1.6.0" data-semver="1.6.0" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.0/angular.js"></script>
+    <script data-require="ui-bootstrap@*" data-semver="2.2.0" src="https://cdn.rawgit.com/angular-ui/bootstrap/gh-pages/ui-bootstrap-tpls-2.2.0.js"></script>
+    <link rel="stylesheet" href="style.css" />
+    <script src="rzslider.js"></script>
+    <script src="script.js"></script>
+  </head>
+
+  <body ng-app="dateRangeDemo" ng-controller="dateRangeCtrl">
+
+    <h2>Slider with Single Date</h2>
+    <rzslider 
+      rz-slider-model="slider_dates.value" 
+      rz-slider-options="slider_dates.options">
+    </rzslider>
+
+    <h2>Slider with Date Range</h2>
+    <rzslider 
+      rz-slider-model="dateRangeSlider.minValue" 
+      rz-slider-high="dateRangeSlider.maxValue" 
+      rz-slider-options="dateRangeSlider.options">
+    </rzslider>
+
+  </body>
+
+</html>

@@ -1,0 +1,77 @@
+{% extends "./RootTemplateWithHeaderFooter.html" %}
+{% import "./Modals/EditProjectModal.html" as editProjectModal%}
+
+
+{% block main_content %}
+    {% set active_created_project = project_list['created_project']['active_project'] %}
+    {% set archived_created_project = project_list['created_project']['archived_project'] %}
+    {% set active_admin_project = project_list['admin_project']['active_project'] %}
+    {% set archived_admin_project = project_list['admin_project']['archived_project'] %}
+    {% set active_contributor_project = project_list['contributor_project']['active_project'] %}
+    {% set archived_contributor_project = project_list['contributor_project']['archived_project'] %}
+    <div class="text-center d-md-flex justify-content-md-center newsletter-subscribe" style="background: url(/static/assets/img/virus-4937553_1920.jpg) center / cover">
+        <div style="background: #ffffff;text-align: left; padding: 4vw">
+            <div class="row">
+                <div class="col d-md-flex justify-content-md-center">
+                    <h2 style="text-align: left;">Which Project Would You Like to Work On for This Time?</h2>
+                </div>
+            </div>
+            {% if active_created_project|length + active_admin_project|length + active_contributor_project|length  == 0 %}
+                <div class="row" style="margin-top: 10px;margin-bottom: 10px;">
+                    <div class="col d-lg-flex justify-content-lg-start">
+                        <h6>You have not created/participated any active project. Create one to start</h6>
+                    </div>
+                </div>
+
+            {% else %}
+                <form action = "/home" method = "POST" onsubmit = "return checkInput ()">
+                {% for project in active_created_project + active_admin_project + active_contributor_project %}
+                    {% set project_choice_id = 'projectChoice-' + (project['project_id']|string) %}
+                    <div class="row" style="margin-top: 10px;margin-bottom: 10px;">
+                        <div class="col d-lg-flex justify-content-lg-start">
+                            <div class="form-check">
+                                <input class = "form-check-input project-option" type = "radio" id = "{{project_choice_id}}" name = "project_id" value = {{project['project_id']}}>
+                                <label class = "form-check-label" for = "{{project_choice_id}}"> {{project['project_name']}}</label>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                    <div class="row" style="margin-top: 30px;">
+                        <div class="col text-end">
+                            <button class="btn btn-primary float-right" type="submit">Done</button>
+                        </div>
+                    </div>
+                    <div class = "row">
+                        <div class="col text-end">
+                            <p id = "error_msg" class = "float-right"></p>
+                        </div>
+                    </div>
+                </form>
+                <div class = "row justify-content-end">
+                    <a href = "/manage_projects" class = "float-right"> Manage Your Project</a>
+                </div>
+            {% endif%}
+            <div class = "row justify-content-end">
+                <button class = 'btn btn-link' onclick = "openEditProjectModal (null, '/create_project')">Quick Create </button>
+            </div>
+            
+        </div>
+    </div>
+    {{editProjectModal.exportHTML ()}}
+{% endblock %}
+
+
+{% block additional_script %}
+    {{super ()}}
+    {{editProjectModal.exportScript ()}}
+    <script>
+        function checkInput () {
+            var numberOfChecked = $('.project-option:checked').length;
+            if (numberOfChecked == 0) {
+                $("#error_msg").text ("You must pick one project to start")
+                return false
+            }
+            return true 
+        }
+    </script>
+{% endblock %}

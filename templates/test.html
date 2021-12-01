@@ -1,0 +1,58 @@
+{% extends "RootTemplate.html" %}
+
+
+
+{% block body%}
+  <div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+      Dropdown button
+    </button>
+
+    <div class="dropdown-menu" id = "firstDropdown" aria-labelledby="dropdownMenuButton">
+      <div class = "yamm-content">
+        <div class = "row">
+          <a>First</a>
+        </div>
+        <div class = "row">
+          <a>First</a>
+        </div>
+        <div class = "row">
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="secondButton" data-toggle="dropdown" aria-expanded="false">
+              Dropdown button
+            </button>
+            <form>
+            <div class="dropdown-menu" id = "myDropdown" aria-labelledby="dropdownMenuButton">
+              <a class="dropdown-item" href="#">Action</a>
+              <a class="dropdown-item" href="#">Another action</a>
+              <a class="dropdown-item" href="#">Something else here</a>
+            </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block additional_script %}
+  <script>
+    $ (document).ready (function () {
+      $ ('#firstDropdown').click (function (event) {
+        alert ('Here')
+      })
+      $ ('#secondButton').click ( function (event) {
+        alert ('Button clicked')
+        event.stopPropagation ()
+        $ ('#myDropdown').toggle ()
+      })
+      $ ('#myDropdown').click (function (event) {
+        //event.stopPropagation ()
+      })
+
+      })
+
+  </script>
+{% endblock %}

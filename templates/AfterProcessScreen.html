@@ -1,0 +1,61 @@
+<html>
+<header>
+	<script type="text/javascript" src="/static/js/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript">   
+		var timeleft = 5;
+		var downloadTimer = setInterval(function(){
+		  	timeleft -= 1;
+		  	if(timeleft <= 0){
+				clearInterval(downloadTimer);
+                                
+				window.location.href = "/home"
+		  	}
+		}, 1000);
+	</script>
+        <link rel="stylesheet" href="/static/assets/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/static/assets/css/divider-text-middle.css">
+        <link rel="stylesheet" href="/static/assets/css/Footer-Clean.css">
+        <link rel="stylesheet" href="/static/assets/css/Login-Box-En.css">
+        <link rel="stylesheet" href="/static/assets/css/Navigation-with-Button.css">
+        <link rel="stylesheet" href="/static/assets/css/Navigation-with-Search.css">
+        <link rel="stylesheet" href="/static/assets/css/Newsletter-Subscription-Form.css">
+        <link rel="stylesheet" href="/static/assets/css/Sidebar-Menu-1.css">
+        <link rel="stylesheet" href="/static/assets/css/Sidebar-Menu.css">
+        <link rel="stylesheet" href="/static/assets/css/SIdebar-Responsive-2-1.css">
+        <link rel="stylesheet" href="/static/assets/css/SIdebar-Responsive-2.css">
+        <link rel="stylesheet" href="/static/assets/css/styles.css">
+
+</header>
+<body>
+
+        <div class="container" style="margin-top: 30px;">
+        <div class="row">
+            <div class="col">
+                <div class="alert alert-success" role="alert" style="padding: 30px 20px;">
+                  {% if (reason=='not found') %} 
+                    <h3>Hi, {{name}}.</h3><span><br>We did not find this abstract in our database, please contact site administrator (<a class="alert-link" href="#">wutz@ucmail.uc.edu</a>) to check this issue. Thanks.
+                  {% elif (reason=='update fail') %} 
+                    <h3>Hi, {{name}}.</h3><span><br> The selection records have not updated successfully in our database, please contact site administrator (<a class="alert-link" href="#">wutz@ucmail.uc.edu</a>) to check this issue. Thanks.
+                  {%elif (reason=='delete record fail') %}
+                    <h3>Hi, {{name}}.</h3><span><br> You are not the owner of this record, please contact the owner for further actions. Thanks.
+                  {%elif (reason=='text summarization fail') %}
+                    <h3>Hi, {{name}}.</h3><span><br>We did not find your records in our database, please contact site administrator (<a class="alert-link" href="#">wutz@ucmail.uc.edu</a>) to check this issue. Thanks.
+                  {%elif (reason=="You can't update other people's record!") %}
+                    <h3>Hi, {{name}}.</h3><span><br> You are not the owner of this record, so you can't update it. Thanks.
+                  {%elif (reason=="login fail") %}
+                    <h3>Hi, {{name}}.</h3><span><br> Login authentication failed, please try agin. Thanks.
+                  {%else %}
+                    <h3>Hi, {{name}}.</h3><span><br> Selection records have been updated. Thanks.
+                  {% endif %}
+                  <br><br>You will be redirected to the previous page in 10 seconds.<br>Click&nbsp;<a class="alert-link" href="/home">here</a>&nbsp;to redirect to the previous page immediately!<br></span></div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/assets/js/jquery.min.js"></script>
+    <script src="/static/assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/static/assets/js/Sidebar-Menu.js"></script>
+ 
+  
+</body>
+</html>

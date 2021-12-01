@@ -1,0 +1,247 @@
+{% extends "./RootTemplateWithHeaderFooter.html" %}
+{% import "./Modals/EditProjectModal.html" as editProjectModal%}
+{% import "./Modals/EditRepositoryModal.html" as editRepositoryModal%}
+{% import "./Modals/ActionConfirmationModal.html" as confirmActionModal%}
+{% import "./Modals/DeleteProjectModal.html" as deleteProjectModal%}
+{% import "./Modals/ManageRepositoryModal.html" as manageRepositoryModal%}
+{% import "./Modals/SaveToMyRepositoryModal.html" as saveToRepositoryModal%}
+{% import "./Modals/ClearAllRepositoriesModal.html" as clearAllRepositoriesModal%}
+
+
+<!--Add main content to our base template-->
+{% block main_content%}
+    <div class = "container-fluid" style = "background-color: #e9ecef">
+        <div class = "container mt-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/manage_projects"><span>index</span></a></li>
+                <li class="breadcrumb-item"><a href="/manage_projects/all_projects"><span>All Projects</span></a></li>
+                <li class="breadcrumb-item"><a href="/manage_projects/all_projects/{{project_info['project_id']}}"><span>{{project_info['project_name']}}</span></a></li>
+            </ol>
+        </div>
+    </div>
+    <div class = "container">
+        <div class = "row">
+            <div class = "col-12 border-bottom p-3">
+                <span class="btn-group">
+                    <h1 class = "mr-3" style = "font-weight: 900;">
+                        {{project_info['project_name']}}
+                        {% if project_info['is_archived'] %}
+                            (archived)
+                        {% endif %}
+                    </h1>
+                    {% if project_info["role_description"] != 'contributor' and not project_info['is_archived'] %}
+                    <i class="bi-pencil" style="font-size: 2rem; color: cornflowerblue;" id="projectOperationChoice" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+                    <div class="dropdown-menu" aria-labelledby="projectOperationChoice">
+                        {% if project_info["role_description"] == 'creator'%}
+                                <a class="dropdown-item" onclick = "openManageRepositoryModal ()">Manage Repository</a>
+                                <a class="dropdown-item" onclick = "openEditProjectModal ({{project_info}}, '/edit_project')">Edit Project</a>
+                                <a class="dropdown-item" onclick = "openClearAllRepositoriesModal ({{project_info}})" >Clear Repositories</a>
+                                <a class="dropdown-item" onclick = "openDeleteProjectModal({{project_info}})">Delete Projects</a>
+                        {% elif project_info["role_description"] == 'admin'%}
+                            <a class="dropdown-item" onclick = "openManageRepositoryModal ()">Manage Repository</a>
+                            <a class="dropdown-item" href="#">Clear Repositories</a>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </span>
+            </div>
+
+
+            <div class = "col-6">
+                <p style = "color:rgb(143, 135, 135)" >Description</p>
+                <p>{{project_info['project_desc']}}</p>
+            </div>
+            <div class = "col-6">
+                <p style = "color:rgb(143, 135, 135)" >Keyword</p>
+                <p>Not implemented yet</p>
+            </div>
+        </div>
+    </div>
+
+    <div class = "container pt-5 pb-5">
+        <div class="table-responsive-md">
+            <table class="table col-md-12 col-lg-10">
+                <thead style = "background-color: rgb(143, 135, 135);">
+                    <tr class="titlerow" style="color: rgb(255,255,255);">
+                        <th class = "col-5">Repository Name</th>
+                        <th class = "col-2">Date Created</th>
+                        <th class = "col-2">Creator</th>
+                        <th class = "col-2">Latest Editor</th>
+                        <th class = "col-1"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for repo_id in repository_list%}
+                        {% set repo = repository_list[repo_id] %}
+                        {% set repo_operation_button = 'repositoryOperationButton-' + repo_id | string%}
+                        <tr class = "repository-row" onclick = "toggleArticleTable ({{repo_id}})">
+                            <td class = "repository-title" style = "font-weight: 900;">{{repo['repo_name']}}</td>
+                            <td>{{repo['created_timestamp']}}</td>
+                            <td>{{repo['repo_creator']}}</td>
+                            <td>N/A</td>
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn" type="button" id="{{repo_operation_button}}" data-toggle="dropdown" onclick = "(event) => {event.stopPropagation()}" aria-haspopup="true" aria-expanded="false">
+                                        ...
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby = "{{repo_operation_button}}">
+                                        <a class="dropdown-item" onclick = "openEditRepositoryModal ({{project_info}}, {{repo}}, '/edit_repository')" >Edit repository</a>
+                                    </div>
+                                    </div>
+                            </td>
+                        </tr>
+                        <tr id = "articleTable-{{repo_id}}" style = "display: none;">
+                            <td colspan = "12" class = "p-0">
+                                <table class="table" style = "background-color: rgb(220, 217, 217);">
+                                    <thead>
+                                        <tr>
+                                            <th class = "col-1"></th> <!--Empty header to indent our nested table-->
+                                            <th class = "col-9" >Article Name</th>
+                                            <th class = "col-2" ></th>
+    
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if repo['list_articles'] | length == 0 %}
+                                            <tr>
+                                                <td></td>
+                                                <td>
+                                                    <small style = "color:rgb(143, 135, 135)">There is no articles save in this repository</small>
+                                                </td>
+                                            </tr>
+                                        {% else %}
+                                            {% for article_id in repo['list_articles']%}
+                                                {% set article = repo['list_articles'][article_id]%}
+                                                <tr>
+                                                    <td></td>
+                                                    <td>
+                                                        <div class = "row mb-2">
+                                                            <div class = "col-md-3 col-6" style = "font-size: 0.9rem; font-weight: 95;">
+                                                                PUBMED ID: {{article_id}}
+                                                            </div>
+                                                            <div class = "col-3 col-6" style = "font-size: 0.9rem; font-weight: 95;">
+                                                                DOCMED ID: {{article_id}}
+                                                            </div>
+
+                                                        </div>
+                                                        <div>
+                                                            <p style = "font-weight: 900; font-size: 1.25rem;">{{article['article_title']}}</p>
+                                                        </div>
+                                                    </td>
+                                                    {% set article_row_id = "articleRow-" + repo_id|string + "-" + article_id|string %}
+                                                    <td>
+                                                        <div class="dropdown float-right">
+                                                            <button class="btn btn-secondary m-0" style = "background-color: rgb(220, 217, 217); color:rgb(0, 0, 0);" type="button" id="projectOperationButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            ...
+                                                            </button>
+                                                            <i class="bi-dash-circle-fill float-right remove-icon d-inline m-0" style="font-size: 1rem; color: rgb(235, 52, 52);" onclick = "removeArticle ({{repo['repo_id']}}, '{{repo['repo_name']}}', {{article['article_id']}}, '{{article['article_title']}}')"></i>
+                                                            <div class="dropdown-menu" aria-labelledby="projectOperationButton">
+                                                                <a class="dropdown-item" onclick = "openSaveToRepositoryModal ({{all_project_info}}, {{article_id}})" >Save to</a>
+                                                                <a class="dropdown-item" href="#">Download PDF</a>
+                                                                <a class="dropdown-item" href="#">Download citation</a>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td></td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% endif %}
+
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+
+                    {% endfor%}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+
+<!--The content for all popup/modal-->
+{% block modal_content %}
+    {{editProjectModal.exportHTML ()}}
+    {{confirmActionModal.exportHTML ()}}
+    {{manageRepositoryModal.exportHTML (project_info, repository_list) }}
+    {{saveToRepositoryModal.exportHTML(all_project_info)}}
+    {{editRepositoryModal.exportHTML ()}}
+
+
+
+
+    
+
+{% endblock %}
+
+<!--Scripts to control our modal-->
+{% block additional_script %}
+    {{super()}}
+
+    {{editProjectModal.exportScript () }}
+    {{confirmActionModal.exportScript ()}}
+    {{deleteProjectModal.exportScript ("/manage_projects/all_projects")}}
+    {{manageRepositoryModal.exportScript() }}
+    {{saveToRepositoryModal.exportScript ()}}
+    {{clearAllRepositoriesModal.exportScript ()}}
+    {{editRepositoryModal.exportScript ()}}
+    <script>
+        function toggleArticleTable (repo_id) {
+            article_table_id = "#articleTable-" + String (repo_id)
+            $ (article_table_id).toggle ()
+        }
+        function removeArticle (repo_id, repo_name, article_id, article_name) {
+            action_title = 'Do you want to remove ' + article_name + ' from ' + repo_name + '?'
+            action_description = 'This change will affect the repository for everybody. Click Yes to proceed the execution'
+            yes_action = function () {
+                $ ('#confirmActionModalSpinner').show ()
+                $ ('#confirmActionButton').attr ('disabled', true)
+                $.post ('/delete_article', {
+                    'repo_id' : repo_id,
+                    'article_id': article_id
+                })
+                .done (function (response) {
+                    $ ('#confirmActionModalSpinner').hide ()
+                    if ('success_msg' in response) {
+                        $ ('#confirmActionModalMessage').text ('Successfully executed your action. Autofresh will happen in 5 seconds')
+                        $ ('#confirmActionModalMessage').css ('color', 'green')
+                        $ ('#confirmActionModalMessage').show ()
+                        setTimeout (function () {}, 5000)
+                        location.reload ()
+
+
+                    }
+                })
+                .fail (function () {
+                    $ ('#confirmActionModalSpinner').hide ()
+                    $ ('#confirmActionButton').attr ('disabled', false)
+                    $ ('#confirmActionModalMessage').text ('Fail to send your request')
+                    $("#confirmActionModalMessage").css ("color", "red")
+                    $("#confirmActionModalMessage").show()
+                })
+            }
+            openAskForConfirmationModal (action_title, action_description, yes_action)
+        }
+    </script>
+
+    
+
+{% endblock %}
+
+{% block additional_style %}
+    {{super ()}}
+    <style>
+        .table thead th, .table td {
+            vertical-align: middle;
+        }
+
+        .repository-row:hover {
+            cursor: pointer;
+            background-color: rgb(129, 173, 218);
+        }
+        #projectOperationChoice:hover {
+            cursor: pointer;
+        }
+    </style>
+{% endblock %}

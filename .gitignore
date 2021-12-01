@@ -1,0 +1,5 @@
+/concept_backup/*
+/term_backup/*
+/mm_lite/*
+/static/process/*
+__pycache__/

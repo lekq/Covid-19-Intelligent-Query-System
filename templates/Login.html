@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>COVID-19 Intelligent Query System</title>
+    <link rel="stylesheet" href="/static/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/assets/fonts/fontawesome-all.min.css">
+   
+    <link rel="stylesheet" href="/static/assets/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/assets/fonts/ionicons.min.css">
+    <link rel="stylesheet" href="/static/assets/fonts/fontawesome5-overrides.min.css">
+
+    <link rel="stylesheet" href="/static/assets/css/divider-text-middle.css">
+    <link rel="stylesheet" href="/static/assets/css/Footer-Clean.css">
+    <link rel="stylesheet" href="/static/assets/css/Login-Box-En.css">
+    <link rel="stylesheet" href="/static/assets/css/Navigation-with-Button.css">
+    <link rel="stylesheet" href="/static/assets/css/Navigation-with-Search.css">
+    <link rel="stylesheet" href="/static/assets/css/Features-Boxed.css">
+    <link rel="stylesheet" href="/static/assets/css/Testimonials.css">
+
+    <link rel="stylesheet" href="/static/assets/css/Newsletter-Subscription-Form.css">
+    <link rel="stylesheet" href="/static/assets/css/Sidebar-Menu-1.css">
+    <link rel="stylesheet" href="/static/assets/css/Sidebar-Menu.css">
+    <link rel="stylesheet" href="/static/assets/css/SIdebar-Responsive-2-1.css">
+    <link rel="stylesheet" href="/static/assets/css/SIdebar-Responsive-2.css">
+    <link rel="stylesheet" href="/static/assets/css/styles.css">
+
+</head>
+
+<body>
+    <nav class="navbar navbar-light navbar-expand-md navigation-clean-button" style="height: 60px;">
+       <div class="container"><a class="navbar-brand" href="http://www.uc.edu" target="_blank"><img src="/static/assets/img/IQS_logo.png" ></a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse"
+                id="navcol-1">
+                <ul class="nav navbar-nav mr-auto"></ul>
+                <ul class="nav navbar-nav">
+                </ul><span class="navbar-text actions"> <font color='#007bff'>Last updated: 06/09/2020 (29,054 articles) </font></span></div>
+        </div>
+    </nav> <!--  d-flex flex-column justify-content-center style="margin-bottom: 30px;"-->
+    <div class="text-center newsletter-subscribe" style="background: url(/static/assets/img/login_bg.jpg) center / cover, rgb(65,65,65);height: 600px;">
+    <div class="d-flex flex-column justify-content-center" id="login-box" style="margin-bottom: 30px;">
+        <div class="login-box-header">
+            <!--<h4 style="color:rgb(139,139,139);margin-bottom:0px;font-weight:400;font-size:32px;">Login</h4>-->
+            <h2 style='margin-bottom:0px;margin-top:0px'>Login</h2>
+        </div>
+        <div class="login-box-content">
+    
+        <div class="gp-login box-shadow" style="display: none;"><a class="d-flex flex-row align-items-center social-login-link" style="margin-bottom: 10px;height: 40px;" href="#"><i class="fa fa-university" style="color: rgb(255,255,255);width: 56px;font-size: 16px;"></i>Login with UC Account</a></div>
+    </div>
+    <div class="d-flex flex-row align-items-center login-box-seperator-container">
+        <div class="login-box-seperator" style="display: none;"></div>
+        <div class="login-box-seperator-text" style="display: none;">
+            <p style="margin-bottom:0px;padding-left:10px;padding-right:10px;font-weight:400;color:rgb(201,201,201);">or</p>
+        </div>
+        <div class="login-box-seperator" style="display: none;"></div>
+    </div>
+    <div class="email-login" style="background-color:#ffffff;">
+    <form action="{{ url_for('login') }}" method="post">
+				<input type="text" class="email-imput form-control" style="margin-top:10px;" name="username" placeholder="Username" id="username" required>
+				<input type="password" class="email-imput form-control" style="margin-top:10px;" name="password" placeholder="Password" id="password" required>
+				<div class="msg">{{ msg }}</div>
+			        <p><p> 	
+                                <button class="btn btn-primary btn-block box-shadow" id="login_submit_btn" type="submit" style='font-weight:normal;font-size:16px;'>Login</button>
+			</form>
+      
+     
+   </div>
+    <div class="submit-row" style="margin-bottom:8px;padding-top:0px;">
+        <div class="d-flex justify-content-between">
+            <div class="form-check form-check-inline" id="form-check-rememberMe" style="display: none;"><input class="form-check-input" type="checkbox" id="formCheck-1" for="remember" style="cursor:pointer;" name="check"><label class="form-check-label" for="formCheck-1"><span class="label-text">Remember Me</span></label></div></div>
+        </div>
+        </div> </div>
+
+         <section class="testimonials-clean" style="background: rgb(247,247,247);padding-bottom: 250px;">
+        <div class="container" style="padding-top: 30px;padding-bottom: 60px;">
+            <div class="intro">
+                <h2 class="text-center">Why IQS?</h2>
+                <p class="text-center">The IQS is a supplementary tool to PubMed, find out inspiration for your research with our search engine!</p>
+            </div>
+            <div class="row people">
+                <div class="col-md-6 col-lg-4 item">
+                    <div class="row">
+                        <div class="col"><img src="../static/assets/img/freestocks-RgKmrxpIraY-unsplash.jpg" style="width: 100%;"></div>
+                    </div>
+                    <div class="box">
+                        <p class="description" style="margin-bottom: 15px;">80% of data source from the reliable PubMed accelerate your reading of major studies.</p>
+                        <p class="description" style="margin-bottom: 15px;">Together with the studies from preprint sources(e.g., medRxiv and bioRxiv), IQS enables your learning of the state-of-the-art research.</p>
+                        <p class="description" style="margin-bottom: 15px;">Unique text extraction highlights key information, not only the keywords.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4 item">
+                    <div class="row">
+                        <div class="col"><img src="../static/assets/img/stanley-dai-73OZYNjVoNI-unsplash.jpg" style="width: 100%;"></div>
+                    </div>
+                    <div class="box">
+                        <p class="description" style="margin-bottom: 15px;">Categorize found articles with repository feature and manage them in an easy way.</p>
+                        <p class="description"> Collaborative functions simplify the article sharing with your team members (coming soon).</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4 item">
+                    <div class="row">
+                        <div class="col"><img src="../static/assets/img/markus-winkler-TrufPdWgmvw-unsplash.jpg" style="width: 100%;"></div>
+                    </div>
+                    <div class="box">
+                        <p class="description" style="margin-bottom: 15px;">Three different query modes free up your search flexibility.</p>
+                        <p class="description" style="margin-bottom: 15px;">For example: <b>Concept query </b>finds you related articles based on the concepts of an existing study. <a class="learn-more" href="/static/QA_page/Q&amp;A-1.html">Learn more </a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+        <div class="footer-clean">
+            <footer>
+                <div class="container">
+                    <div class="row justify-content-center">
+                    <div class="col-sm-4 col-md-3 item">
+                        <h3>COVID-19 Resource</h3>
+                        <ul>
+                            <li><a href="https://icite.od.nih.gov/covid19/search/" target="_blank">COVID-19 Protfolio(NIH)</a></li>
+                            <li><a href="https://ir.nist.gov/covidSubmit/" target="_blank">TREC-COVID</a></li>
+                            <li><a href="https://www.semanticscholar.org/cord19" target="_blank">CORD-19 Research Dataset</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-sm-4 col-md-3 item">
+                        <h3>About</h3>
+                        <ul>
+                            <li><a href="https://www.med.uc.edu" target="_blank">College of Medicine, University of Cincinnati</a></li>
+                            <li><a href="https://med.uc.edu/bmi/labs/iCDCU" target="_blank">iCDCU Lab</a></li>
+                            <li><a href="https://www.uchealth.com/" target="_blank">UC Health</a></li>
+                            <li><a href="mailto:wutz@ucmail.uc.edu">Contact Us</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-sm-4 col-md-3 item">
+                        <h3>Publication</h3>
+                        <ul>
+                            <li><a href="https://trec.nist.gov/pubs/trec27/papers/MedIER-PM.pdf" target="_blank">TREC-PM 2018</a></li>
+                            <li><a href="https://trec.nist.gov/pubs/trec28/papers/CincyMedIR.PM.pdf" target="_blank">TREC-PM 2019</a></li>
+                            
+                        </ul>
+                    </div>
+                    
+    
+                    <div class="col-lg-3 item social">
+<a href="http://www.facebook.com" target="_blank"><i class="icon ion-social-facebook"></i></a><a href="http://www.twitter.com" target="_blank"><i class="icon ion-social-twitter"></i></a><a href="https://www.snapchat.com" target="_blank"><i class="icon ion-social-snapchat"></i></a><a href="https://www.instagram.com" target="_blank"><i class="icon ion-social-instagram"></i></a>
+
+                            <p
+                                class="copyright">iCDCU ©2021</p>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+        <script src="/static/assets/js/jquery.min.js"></script>
+        <script src="/static/assets/bootstrap/js/bootstrap.min.js"></script>
+        <script src="/static/assets/js/Sidebar-Menu.js"></script>
+</body>
+
+</html>

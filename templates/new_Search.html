@@ -1,0 +1,350 @@
+{% extends "./RootTemplateWithHeaderFooter.html"%}
+
+
+
+{% block main_content %}
+    <!--place to pick search option and pick keyword (2nd row)-->
+    <div  style="background-color:#1d212880;">
+        <div class="container mb-5 p-4">
+            <div class = "row">
+                <div class = "col-lg-9 col-sm-12">
+                    <form class="form-inline" action="/search" method="post" onsubmit='return check_field()'>
+                        {%set check_term = "" %}
+                        {%set check_concept = "" %}
+                        {% if query_focus=='term' %}
+                            {% set check_term = "checked"%}
+                        {% elif query_focus == 'concept' %}
+                            {% set check_concept = "checked"%}
+                        {% endif %}
+
+                        <div class="radio">
+                            <label style="color:white"><input type="radio" name="optradio" value='term' id='term' {{check_term}}>Term &nbsp;<i class="fa fa-question-circle-o" title="Search by input term(s) or document terms" style="font-size: 16px;color:white"></i></label>
+                        </div>&nbsp;&nbsp;&nbsp;
+
+                        <div class="radio">
+                            <label style="color:white"><input type="radio" name="optradio" value='concept' id='concept'  {{check_concept}} >Concept (may be slower) &nbsp;<i class="fa fa-question-circle-o" title="Search by input concepts of input term(s) or document" style="font-size: 16px;color:white"></i></label> 
+                        </div>&nbsp;&nbsp;&nbsp;
+        
+        
+                        <input class="form-control" type="text" id="search_content" name="search_content" placeholder="Free-text / PMID / System Document ID" value = "{{search_content}}">
+                        &nbsp;&nbsp;&nbsp;<button class="btn btn-primary border rounded action-button" type="submit" id='search_btn' style="background-color:#007bff;font-size: 16px;font-weight: normal;">Search</button>
+                    </form>
+                </div>
+                <div class = "col-lg-3 col-sm-12 justify-content-end">
+                    <div class = "d-inline" style = "color: rgb(255, 255, 255)">
+                        Search for: {{project_info['project_name']}}
+                    </div>
+                    <div class = "d-inline">
+                        <a href = "/select_project"><button type="button" class="btn btn-light">Change</button></a>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Main component in search page-->
+    <div style="margin-top: 0px;">
+        <div class="container">
+        <!--A big row with 2 columns-->
+        <!--First column expands 3 grids and contains filter box-->
+            <div class="row" style="margin-top: 0px;">
+                <!--Start of the first column-->
+                <div class="col-md-3">
+                    <div class="card" style="margin-top: 10px;margin-bottom: 10px;margin-left: 5px;"  id="top_menu">
+                        <div class="card-body" id="left_menu">
+                            <h6 class="card-title" style="margin-bottom: 2px;"><b>Search Outcome</b></h4>
+                            <p style="margin-bottom: 2px;"><input type="checkbox" id='article_search' value='article_search' checked>&nbsp;Articles</p>
+                            <p style="margin-bottom: 2px;"><input type="checkbox" id='repository_search' value='repository_search' checked>&nbsp;Repositories</p>
+                            <hr>
+
+                            <h6 class="card-title" style="margin-bottom: 2px;"><b>Publication Type</b></h4>
+                            <p style="margin-bottom: 10px;"><input type="checkbox" name='ptype' onchange = "applyFilter ()" value='Preprint' checked>&nbsp;Preprint&nbsp;</p>
+                            <p style="margin-bottom: 10px;"><input type="checkbox" name='ptype' onchange = "applyFilter ()" value='Review' checked>&nbsp;Review</p>
+                            <p style="margin-bottom: 10px;"><input type="checkbox" name='ptype' onchange = "applyFilter ()" value='Case Reports' checked>&nbsp;Case Reports</p>
+                            <p style="margin-bottom: 10px;"><input type="checkbox" name='ptype' onchange = "applyFilter ()" value='Journal Article' checked>&nbsp;Journal Article</p>
+                            <hr>
+                            <!--Implement Date filter and load repository-->
+                            <h6 class="card-title" style="margin-bottom: 2px;"><b>Date</b></h4>
+                            <input id = "dateFilter" type = "text" name = "daterange" value = "" style = "max-width: 100%;">
+            
+                        </div>
+                    </div>
+                </div>
+                <!--End of the first column-->
+
+                <!--Start of the second column-->
+                <div class="col-md-9">
+                    <div style='display:block'>
+                        <p style = "color: green">We found out {{article_list['abstract']|length}} articles for you!!</p>
+                    </div>
+                    <!--List of articles-->
+                    <div style='display:block'>
+                        <!--Start of an article-->
+                        {% for article in article_list['abstract']%}
+                            {% set display_article_status = "display: block" %}
+                            {% if loop.index > 10 %}
+                                {% set display_article_status = "display: none" %}
+                            {% endif %}
+                            <li class="list-group-item article-pannel" style='{{display_article_status}}'>
+                                <div class = "row">
+                                    <div class = "col-md-8 col-sm-12">  
+                                        <h5 style="margin-bottom: 15px;"> 
+                                            <small class="d-lg-flex justify-content-lg-start" style="color: #999999;"> 
+                                                <span class = 'pub-type mt-3 mb-3' style = "font-weight: bold; color: #919191;"> {{article['p_type']}} </span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  
+                                                <span class = 'doc-id mt-3 mb-3' style = "font-weight: bold; color: #007bff;">  DOC ID: {{article['abstract_id']}}  </span>
+                                                {% if article['[pubmed_id'] is number %}
+                                                    <span class='pubmed_id mt-3 mb-3' style = "font-weight: bold; color: #007bff;"> PUBMED ID: {{article['pubmed_id']}}  </span>
+                                                {% endif %}  
+                                            </small>
+                                            <span style = "font-weight: bold; color: #212529;"> <p>{{article['title']}}</p></span>
+                                            <button class = "btn btn-primary btn-sm border rounded border-light" type="button" style="background-color: #007bff;color: #fffff;margin-right: 0px;margin-left: 20px;padding-top: 2px;padding-bottom: 2px;padding-right: 10px;padding-left: 10px;font-size: 12px;">Full Text</button>
+                                            <button class= "btn btn-primary btn-sm border rounded border-light" type="button" style="background-color: gray;color: #ffffff;margin-right: 0px;margin-left: 20px;padding-top: 2px;padding-bottom: 2px;padding-right: 10px;padding-left: 10px;font-size: 12px;">Citation</button> 
+                                        </h5>
+                                    </div>
+                                    <div class = "col-md-4 col-sm-12">
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm dropdown-toggle float-right" style = "background-color: rgb(238, 236, 236); color: #007bff;" type="button" id="repositoryOptionButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                              Save to my repository
+                                            </button>
+                                            <div class="dropdown-menu" id = "repositoryMenu" aria-labelledby="repositoryOptionButton">
+                                                {% for repo_id in repository_list %}
+                                                    {% set repo = repository_list[repo_id]%}
+                                                    {% set check_status = "" %}
+                                                    {% if article['article_id'] in repo['list_articles'] %}
+                                                        {% set check_status = "checked" %}
+                                                    {% else %}
+                                                        {% set check_status = "unchecked" %}
+                                                    {% endif %}
+                                                    <form class = "p-0">
+                                                        <div class = "row p-3">
+                                                            <div class = "col-9">
+                                                                <p>{{repo['repo_name']}}</p>
+                                                            </div>
+                                                            <div class="col-3 p-0">
+                                                                <input type="checkbox" data-size = "xs" data-toggle="toggle" data-on = " " data-off = " " data-offstyle = "secondary" onchange = "saveOrRemoveArticle ({{article['article_id']}}, {{repo['repo_id']}}, {{project_info['project_id']}}, this)" {{check_status}}> 
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                {% endfor %}
+                                            </div>
+                                          </div>
+                                    </div>
+                                </div>
+                                <div class = "row m-0">
+                                    <span style = "color: #656565;font-weight: normal;"> Citation Count: 5 (need input from backend) </span><br>
+                                    <span style = "color: #656565;font-weight: normal;"> Authors: {{article['authors']}} </span><br>
+                                    <span style = "color: #656565;font-weight: normal;" class = "publish-date" timevalue = "{{article['publish_time_number']}}"> Publish time: {{article['publish_time']}} </span><br>
+                                    <span class='first-para' style='padding-top:10px;padding-bottom:10px;color: black; font-size: 1.1rem;'>{{article['first_para']}}</span>
+                                    <span class = "full-abstract" style='display:none;margin-top: 20px; font-size: 1.1rem;'>{{article['abstract'] | safe}}</span>
+                                    <span><button class = "btn btn-link show-button" onclick = "toggleArticleAbstract (this)" fullarticle = "false">+Read more</button></span>
+                                </div>
+                            </li>
+                            <!--End of an article-->
+                        {% endfor %}
+                    </div>
+                </div>
+                <!--End of the second column-->
+            </div>
+        </div>
+    </div>
+
+    <div class = "text-center m-4">
+        {% if article_list['abstract'] | length > 10%}
+            {% if article_list['abstract'] |length >= 20%} 
+                {% set next_length = 20 %}
+            {% else %}
+                {% set next_length = article_list['abstract'] |length  %}
+            {% endif %}
+            <button class = 'btn btn-primary' id = "limitArticleButton" onclick =  "increaseLimit ()" currentdisplay = "10" upperlimit = "{{article_list['abstract'] | length}}"> Show more (11 - {{next_length}} ) </button>
+        {% endif %}
+    </div>
+{% endblock %}
+
+
+
+{% block additional_style %}
+    {{super ()}}
+    <style>
+        .dropdownPannel {
+            width: 240px;
+        }
+
+        .meta_data {
+            margin-top:10px;
+            color: #656565;
+            font-weight: normal;
+            line height:24px;
+            font-size: 14px;
+        }
+
+        .meta_citation {
+            color: #656565;
+            font-weight: normal;
+            line height:24px;
+            font-size: 14px;
+        }
+
+        .abs_content {
+            margin-top:10px;
+            margin-bottom:15px;
+            color: #212529;
+            font-weight: normal;
+            line height:24px;
+            font-size: 14px;
+        }
+
+        li[name="record_block"]:hover {
+            background-color:#f7f7f7;
+        }
+
+        .pointer-link {
+            cursor: pointer;
+        }
+
+        *[id^='load_'] {
+            width: 200px;
+            color: #fff;
+            display: block;
+            text-align: center;
+            margin: 20px auto;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid transparent;
+            background-color: blue;
+            transition: .3s;
+        }
+
+        *[id^='load_']:hover {
+            color: blue;
+            background-color: #fff;
+            border: 1px solid blue;
+            text-decoration: none;
+        }
+
+    </style>
+
+{% endblock %}
+
+
+{% block additional_script %}
+    {{super()}}
+    <script>
+        $(document).ready ( () => {
+            initializeDateFilter ()
+        })
+
+
+        function initializeDateFilter () {
+            // Please refer to https://www.daterangepicker.com/ for the APIs
+            $('#dateFilter').daterangepicker({
+                opens: 'left',
+                startDate: '2019/01/01',
+                endDate : moment(),
+                minDate: '2019/01/01',
+                maxDate: moment (),
+                locale: {
+                    format: 'YYYY/MM/DD'
+                }
+            }, function (start, end, label) {
+                applyFilter ()
+            });
+
+        }
+        function increaseLimit () {
+            var current_display = parseInt ($ ('#limitArticleButton').attr ('currentdisplay'))
+            var upper_limit = parseInt ($ ('#limitArticleButton').attr ('upperlimit'))
+            var next_display = Math.min (current_display + 10, upper_limit)
+            $ ('#limitArticleButton').attr ('currentdisplay', next_display)
+            if (next_display == upper_limit) {
+                $ ('#limitArticleButton').hide ()
+            } else {
+                $ ('#limitArticleButton').text ('Show more (' + (next_display + 1) + ' - ' + Math.min (next_display + 10, upper_limit) + ')')
+            }
+            applyFilter ()
+        }
+        function saveOrRemoveArticle (article_id, repo_id, project_id, current_element) {
+            var is_saving = $ (current_element).is(":checked")
+            if (is_saving) {
+                $.post ('/save_article', {
+                    'repo_id' : repo_id,
+                    'article_id': article_id
+                })
+                .done (function (response) {
+                    if (!('success_msg' in response)) {
+                        $ (current_element).bootstrapToggle ()
+                    }
+                })
+
+            } else {
+                $.post ('/delete_article', {
+                    'repo_id' : repo_id,
+                    'article_id': article_id
+                })
+                .done (function (response) {
+                    if (!('success_msg' in response)) {
+                        $ (current_element).bootstrapToggle ()
+                    }
+                })
+            }
+            
+        }
+
+        function toggleArticleAbstract (toggle_button_element) {
+            if ($ (toggle_button_element).attr ('fullarticle') == "true") {
+                $ (toggle_button_element).attr ('fullarticle', false)
+                $ (toggle_button_element).text ('+Read more')
+                $ (toggle_button_element).closest ('.article-pannel').find ('.first-para').show ()
+                $ (toggle_button_element).closest ('.article-pannel').find ('.full-abstract').hide ()
+            } else {
+                $ (toggle_button_element).attr ('fullarticle', true)
+                $ (toggle_button_element).text ('-Show less')
+                $ (toggle_button_element).closest ('.article-pannel').find ('.first-para').hide ()
+                $ (toggle_button_element).closest ('.article-pannel').find ('.full-abstract').show ()
+            }
+
+        }
+        function applyFilter () {
+            var start_date = parseInt ($('#dateFilter').data ('daterangepicker').startDate.format ('YYYYMMDD'))
+            var end_date = parseInt ($('#dateFilter').data ('daterangepicker').endDate.format ('YYYYMMDD'))
+            var list_checked_p_type = []
+            $("input[name = 'ptype']:checked").each ((index, p_type_box) => {
+                list_checked_p_type.push ($(p_type_box).val())
+                
+            })
+            
+            $ ('.article-pannel').each ((index, article_pannel) => {
+
+                // check if this article is within the limit of showed articles. Ex: if we are showing only 10 articles and this article is the 11th one, we will not show it
+                var show_limit = parseInt ($ ("#limitArticleButton").attr ('currentdisplay'))
+                if (index >= show_limit) {
+                    $ (article_pannel).hide ()
+                    return
+                }
+                
+
+                // check if this article has one of the checked p-types on the filter box 
+                var article_p_type = $ (article_pannel).find ('.pub-type').text ().trim().split (';')
+                var have_p_type = false
+                article_p_type.forEach ( (p_type) => {
+                    if (list_checked_p_type.includes (p_type)) {
+                        have_p_type = true
+                    }
+                })
+                if (!have_p_type) {
+                    $ (article_pannel).hide ()
+                    return
+                }
+
+                // check if its publish date is within our chosen date range
+                var publish_date = parseInt ($ (article_pannel).find (".publish-date").attr ('timevalue'))
+                if (publish_date < start_date || publish_date > end_date) {
+                    $ (article_pannel).hide ()
+                    return
+                }
+                $ (article_pannel).show ()
+
+            })
+        }
+    </script>
+{% endblock %}

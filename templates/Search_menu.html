@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>COVID-19 Intelligent Query System</title>
+    <link rel="stylesheet" href="/static/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/assets/fonts/fontawesome-all.min.css">
+    <link rel="stylesheet" href="/static/assets/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/assets/fonts/ionicons.min.css">
+    <link rel="stylesheet" href="/static/assets/fonts/fontawesome5-overrides.min.css">
+    <link rel="stylesheet" href="/static/assets/css/divider-text-middle.css">
+    <link rel="stylesheet" href="/static/assets/css/Footer-Clean.css">
+    <link rel="stylesheet" href="/static/assets/css/Login-Box-En.css">
+    <link rel="stylesheet" href="/static/assets/css/Navigation-with-Button.css">
+    <link rel="stylesheet" href="/static/assets/css/Navigation-with-Search.css">
+    <link rel="stylesheet" href="/static/assets/css/Newsletter-Subscription-Form.css">
+    <link rel="stylesheet" href="/static/assets/css/Sidebar-Menu-1.css">
+    <link rel="stylesheet" href="/static/assets/css/Sidebar-Menu.css">
+    <link rel="stylesheet" href="/static/assets/css/SIdebar-Responsive-2-1.css">
+    <link rel="stylesheet" href="/static/assets/css/SIdebar-Responsive-2.css">
+    <link rel="stylesheet" href="/static/assets/css/styles.css">
+    <link rel="stylesheet" href="/static/assets/css/menu.css">
+    
+    <link rel="stylesheet" href="/static/assets/css/menu_style.css">
+
+    <style>
+
+#myBtn {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 30px;
+  z-index: 99;
+  font-size: 18px;
+  border: none;
+  outline: none;
+  background-color: red;
+  color: white;
+  cursor: pointer;
+  padding: 15px;
+  border-radius: 4px;
+}
+
+#myBtn:hover {
+  background-color: #555;
+}
+</style>
+
+
+    <script>
+
+    function check_relevance(task_id) {
+
+   
+          if (document.getElementById("annotation_action").value=='save'){ //default action is 'save' 
+              var rel_ele=[];
+              var ir_ele=[];
+              
+              var spans = document.getElementsByTagName("span");
+              var sel_count=0;
+              var sels='';
+              var time_list='';
+               for(i=0;i<spans.length;i++)
+               {
+                 if (spans[i].id.includes('title_span')){
+                 var li_id=spans[i].id.replace("title_span","li");
+                 var sel_id=li_id.replace("li_","");
+                 var btn_id_r=spans[i].id.replace("title_span","btn_r");
+                 var btn_id_ir=spans[i].id.replace("title_span","btn_ir");
+                 if (document.getElementById(btn_id_r).style.backgroundColor === "rgb(0, 123, 255)"){
+                      rel_ele.push(li_id);
+                      sels+=sel_id+"_1||";
+                      time_list+=document.getElementById(btn_id_r).value+"||";
+                     }
+                 else if (document.getElementById(btn_id_ir).style.backgroundColor === "rgb(0, 123, 255)"){
+                      ir_ele.push(li_id);
+                      sels+=sel_id+"_2||";
+                      time_list+=document.getElementById(btn_id_ir).value+"||";
+                     }
+                  } 
+               }
+               time_list=time_list.substring(0,time_list.length-2);
+               alert(time_list);
+ 
+               sel_count=rel_ele.length+ir_ele.length;
+               if (sel_count<3 ){
+                     alert ("You have to annotate at least 3 articles!");
+                     return false;
+               }else{
+                    sels=sels.substring(0,sels.length-2);
+                    document.getElementById("all_sels").value=sels;
+                    document.getElementById("task_id").value=task_id;
+                    var txt;
+                    var r = confirm("Please confirm that you want to overwrite existing data or insert a new record for this task. \nWe will redirect you to the index page for the next task. Thanks for your help!");
+                    if (r == true) {
+                     document.getElementById("saveForm").submit();
+                    } else {
+                     return false;
+                    }
+
+               }
+               return false;
+           }else{ // for review
+              var ant_url='';
+         
+              {%for i in t_list%}
+              {% set query_id=t_list[i] %}
+              var t_id='{{i}}';
+              if (t_id==task_id){
+               ant_url='/search?search_content={{query_id}}&task_id={{i}}'; 
+              }
+
+              {%endfor%}
+
+              if (ant_url==''){
+               alert('No annotation result in our database!');
+               return false;}
+              else{
+               document.getElementById("annotation_url").href=ant_url;
+               document.getElementById("annotation_url").click();
+              }
+           }
+    }
+
+   function annotation_action() { //if we get relevance info, it means we just used annotation 'view' feature 
+     {% if relevance|length > 1 %} 
+       document.getElementById("annotation_action").value='view';
+     {% endif %}
+   }
+
+
+
+    function get_ptype(){
+             var checkboxes = document.getElementsByName('ptype');
+             var checkbox_ary = [];
+             var show_ele=[];
+
+             var spans = document.getElementsByTagName("span");
+ 
+             for (var checkbox of checkboxes) {
+                    if (checkbox.checked & checkbox.value=='All'){
+                      checkbox_ary.push("All");
+                    }
+                    else if (checkbox.checked & checkbox.value!='All'){
+                      checkbox_ary.push(checkbox.value);
+                    } 
+             }
+
+
+              if (checkbox_ary[0]=='All'){
+               
+               for(i=0;i<spans.length;i++)
+               {
+                 if (spans[i].id.includes('title_span')){
+                  var li_id=spans[i].id.replace("title_span","li");
+                  document.getElementById(li_id).style.display = "block";
+                }
+               }
+              }
+              else
+              {
+               for(i=0;i<spans.length;i++)
+               {
+                 if (spans[i].id.includes('title_span')){
+                 var li_id=spans[i].id.replace("title_span","li"); 
+                 document.getElementById(li_id).style.display = "none";  
+
+                 for (var j = 0; j < checkbox_ary.length; j++) { 
+                   if(spans[i].textContent.includes(checkbox_ary[j])){
+                   show_ele.push(li_id); 
+                   }
+                    
+                 }
+               }           
+             } 
+
+             get_show_ids=get_relevance();
+             for (i=0;i<show_ele.length;i++){ //show some eles
+                   var li_id=show_ele[i];   
+                   if (get_show_ids.length>0){
+                    if (get_show_ids.includes(li_id))        
+                     document.getElementById(li_id).style.display = "block";  
+                   }else
+                     document.getElementById(li_id).style.display = "block";
+              }      
+            }
+   }
+   
+    function get_relevance(){
+             var checkboxes = document.getElementsByName('relevance');
+             var checkbox_ary = [];
+             var rel_ele=[];
+             var ir_ele=[];
+             var show_ids=[];
+             var spans = document.getElementsByTagName("span");
+
+             for (var checkbox of checkboxes) {
+                    if (checkbox.checked & checkbox.value=='All'){
+                      checkbox_ary.push("All");
+                    }
+                    else if (checkbox.checked & checkbox.value!='All'){
+                      checkbox_ary.push(checkbox.value);
+                    }
+             }
+              if (checkbox_ary[0]=='All'){
+
+               for(i=0;i<spans.length;i++)
+               {
+                 if (spans[i].id.includes('title_span')){
+                  var li_id=spans[i].id.replace("title_span","li");
+                  document.getElementById(li_id).style.display = "block";
+                  show_ids.push(li_id);
+                }
+               }
+              }
+              else
+              {
+               for(i=0;i<spans.length;i++)
+               {
+                 if (spans[i].id.includes('title_span')){
+                 var li_id=spans[i].id.replace("title_span","li");
+                 document.getElementById(li_id).style.display = "none"; //hide all
+                 var btn_id_r=spans[i].id.replace("title_span","btn_r");
+                 var btn_id_ir=spans[i].id.replace("title_span","btn_ir");
+                 if (document.getElementById(btn_id_r).style.backgroundColor === "rgb(0, 123, 255)"){
+                      rel_ele.push(li_id);
+                     }
+                 else if (document.getElementById(btn_id_ir).style.backgroundColor === "rgb(0, 123, 255)"){
+                      ir_ele.push(li_id);
+                     }
+                    
+                 }
+               }
+                  if (checkbox_ary.includes('Relevant')){
+                   for (i=0;i<rel_ele.length;i++){ //show some eles
+                    var li_id=rel_ele[i];
+                    document.getElementById(li_id).style.display = "block";
+                    show_ids.push(li_id);
+                   }
+                  }
+                  if (checkbox_ary.includes('Irrelevant')){
+
+                   for (i=0;i<ir_ele.length;i++){ //show some eles
+                    var li_id=ir_ele[i];
+                    document.getElementById(li_id).style.display = "block";
+                    show_ids.push(li_id);
+                   }
+                  }
+
+
+              }
+              return show_ids;
+
+    }
+
+ 
+    function update_search_field() {
+      if ('{{a_id}}'=='999998'){
+       document.getElementById('search_content').value = '{{query_content}}';
+       document.getElementById('a_id').value = '{{query_content}}';
+      }
+      else
+       document.getElementById('search_content').value = {{a_id}};
+    }
+
+
+    function hide_show(ele_id) {
+     var x = document.getElementById(ele_id);
+     var btn_id="btn_hide_"+ele_id
+     var y= document.getElementById(btn_id)
+     if (x.style.display === "none") {
+      x.style.display = "block";
+      y.style.display = "block";
+     } else {
+      x.style.display = "none";
+      y.style.display = "none";
+     }
+    }
+
+    function btn_bg_color(btn_id){
+     var n = btn_id.includes("_ir");
+     var other_btn='';
+
+     document.getElementById(btn_id).style.backgroundColor="#007bff";
+     document.getElementById(btn_id).style.color="#ffffff";
+     if (n){
+      other_btn=btn_id.replace("_ir", "_r");     
+     }else{
+      other_btn=btn_id.replace("_r", "_ir"); 
+     } 
+     document.getElementById(other_btn).style.backgroundColor="#C0C0C0";
+     document.getElementById(other_btn).style.color="#000000";
+
+     var today = new Date();
+     var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+     var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+     var dateTime = date+' '+time; 
+     document.getElementById(btn_id).value=dateTime;
+     //alert(document.getElementById(btn_id).value);
+
+   }
+   
+   function update_annotation_action(a_value){
+    document.getElementById('annotation_action').value=a_value; 
+   }
+      
+   </script>
+
+</head>
+
+<body onload="javascript:document.getElementById('article_show').click();update_search_field();annotation_action()">
+
+<button onclick="topFunction()" id="myBtn" title="Go to top">Go to Top</button>
+
+<script>
+//Get the button
+var mybutton = document.getElementById("myBtn");
+
+// When the user scrolls down 20px from the top of the document, show the button
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+  if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+    mybutton.style.display = "block";
+  } else {
+    mybutton.style.display = "none";
+  }
+}
+
+// When the user clicks on the button, scroll to the top of the document
+function topFunction() {
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
+}
+</script>
+ 
+   <nav class="navbar navbar-light navbar-expand-md navigation-clean-button" style="height: 60px;">
+        <div class="container"><a class="navbar-brand" href="http://www.uc.edu"><img src="/static/assets/img/UC_logo.png"></a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse"
+                id="navcol-1">
+                <ul class="nav navbar-nav mr-auto"></ul>
+                <ul class="nav navbar-nav" style="display: none;">
+                    <li class="nav-item dropdown"><a class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false" href="#"><i class="far fa-bell" ></i></a>
+                        <div class="dropdown-menu" role="menu"><a class="dropdown-item" role="presentation" href="#">DSC Process</a><a class="dropdown-item" role="presentation" href="#">Like</a><a class="dropdown-item" role="presentation" href="#">Share</a></div>
+                    </li>
+                </ul>
+         <span class="navbar-text actions">
+  
+<a class="btn btn-primary border rounded action-button" role="button" href="/logout">Logout</a></span></div>
+        </div>
+    </nav>
+    <div class="newsletter-subscribe" style="background-color: rgb(65,65,65);height: 60px;padding-bottom: 15px;margin-top: 0;padding-top: 10px;margin-bottom: 15px;">
+        <div class="container">
+            <form class="form-inline d-lg-flex justify-content-lg-start" action="/search" method="post" style="height: 40px;"><div>
+                <input class="form-control" type="text" id="search_content" name="search_content" style="height: 31px;width: 350px;padding-right: 5px;padding-left: 5px;padding-top: 0px;padding-bottom: 0px;" placeholder="Enter free-text query / System ID / PMID"></div>
+                <div class="form-group"><button class="btn btn-primary" type="submit" style="padding-top: 10px;padding-bottom: 10px;">Search&nbsp;</button></div>
+            </form>
+        </div>
+    </div>
+    <div style="margin-top: 0px;">
+        <div class="container">
+            <div class="row" style="margin-top: 0px;">
+
+             <div class="col-lg-3">
+                <div class="card" style="margin-top: 10px;margin-bottom: 10px;margin-right: 10;">
+                    <div class="card-body">
+                        <h5 class="card-title" style="margin-bottom: 20px;">Publication Type</h4>
+                        <hr>
+                        <p style="margin-bottom: 10px;"><input type="checkbox" name='ptype' value='All' onclick="get_ptype()" checked>&nbsp;All</p>
+                        <p style="margin-bottom: 10px;"><input type="checkbox" name='ptype' value='Journal' onclick="get_ptype()">&nbsp;Journal Article</p>
+                        <p style="margin-bottom: 10px;"><input type="checkbox" name='ptype' value='Review' onclick="get_ptype()">&nbsp;Review</p>
+                        <p style="margin-bottom: 10px;"><input type="checkbox" name='ptype' value='Preprint' onclick="get_ptype()">&nbsp;Preprint</p>
+                        <hr>
+                        <!-- <h5 class="card-title" style="margin-bottom: 20px;">My Repository</h4>
+                        <hr>
+                        {%for i in t_list%}
+                        {% set query_id=t_list[i] %}
+                        <p style="margin-bottom: 10px;" id='3'><a href="/search?search_content={{query_id}}&task_id={{i}}">Task {{i}}</a></p>
+                        {%endfor%} -->
+           
+                        <!-- 
+                        <div id="accordian">
+			<ul>
+			<li>
+			<a href="javascript:alert('You can save your annotation result now.');update_annotation_action('save')">Save</a> / <a href="javascript:alert('You can review your annotation result now.');update_annotation_action('view')">View</a> annotation result<br>
+			<li class>
+			<a href="#">Task 1</a>
+			<ul>
+			<li><a href="javascript:check_relevance('1-1')">1-1</a></li>
+			<li><a href="javascript:check_relevance('1-2')">1-2</a></li>
+			</ul>
+			</li>
+
+			<li>
+			<a href="#">Task 2</a>
+			<ul>
+			<li><a href="javascript:check_relevance('2-1')">2-1</a></li>
+			<li><a href="javascript:check_relevance('2-2')">2-2</a></li>
+			</ul>
+			</li>
+			<li>
+			<a href="#">Task 3</a>
+			<ul>
+			<li><a href="javascript:check_relevance('3-1')">3-1</a></li>
+			<li><a href="javascript:check_relevance('3-2')">3-2</a></li>
+			</ul>
+			</li>
+
+			<li>
+			<a href="#">Task 4</a>
+			<ul>
+			<li><a href="javascript:check_relevance('4-1')">4-1</a></li>
+			<li><a href="javascript:check_relevance('4-2')">4-2</a></li>
+			</ul>
+			</li>
+
+			<li>
+			<a href="#">Task 5</a>
+			<ul>
+			<li><a href="javascript:check_relevance('5-1')">5-1</a></li>
+			<li><a href="javascript:check_relevance('5-2')">5-2</a></li>
+			</ul>
+			</li>
+
+			<li>
+			<a href="#"> Task 6</a>
+			<ul>
+			<li><a href="javascript:check_relevance('6-1')">6-1</a></li>
+			<li><a href="javascript:check_relevance('6-2')">6-2</a></li>
+			</ul>
+			</li>
+
+			</li></ul></div> -->
+                    </div>
+
+          
+                </div>
+            </div>
+
+                <div class="col-md-6 col-lg-9">
+                    <div class="row float-right">
+                        <div class="col"><form class="form-inline d-lg-flex justify-content-lg-start" action="/save" method="post"  id="saveForm" name="saveForm" style="height: 40px;">
+
+ <ul class="nav nav-pills" style="margin-bottom: 15px;">
+
+                  <li class="dropdown" >
+                  <button class="btn btn-primary dropdown-toggle text-primary" data-toggle="dropdown" aria-expanded="false" type="button" style="height: 40px;background-color: rgb(237,237,237);">Save annotation result</button>
+
+                  <ul class="dropdown-menu">
+                  <li>
+                   <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name='save_task' value='t1' onclick="javascript:check_relevance('1')"> Task 1
+                    </label>
+                    </div>
+                  </li>
+                  <li>
+                  <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name='save_task' value='t2' onclick="javascript:check_relevance('2')"> Task 2
+                    </label>
+                  </div>
+                  </li>
+               </ul>
+               </li>
+
+                    </ul>
+
+
+
+
+<div class='dropdown'>
+<button class="btn btn-primary dropdown-toggle text-primary" data-toggle="dropdown" aria-expanded="false" type="button" style="display:none;height: 40px;background-color: rgb(237,237,237);">Save annotation result</button>
+                                <ul class="dropdown-menu" role="menu" style='display:none'>
+                                    <h6 class="dropdown-header" role="presentation" style="font-size: 12px;">All Repositories</h6><a class="dropdown-item" role="presentation" href="javascript:check_relevance('3')">Task 3</a><a class="dropdown-item" role="presentation" href="javascript:check_relevance('2')">Task 2</a><a class="dropdown-item" role="presentation" href="javascript:check_relevance('1')">Task 1</a>
+                                    </ul>
+               
+
+                        <input type="hidden" id="all_sels" name="all_sels" value="">
+                        <input type="hidden" id="a_id" name="a_id" value="{{a_id}}">
+                        <input type="hidden" id="task_id" name="task_id" value=""> 
+                        <input type="hidden" id="annotation_action" name="annotation_action" value="save">
+                        <a href="http://www.google.com" style="display:none" id="annotation_url" name="annotation_url">can't see me</a> 
+                        </form>
+                      </div>
+ 
+                    </div>
+                </div>
+
+                <div>
+                        
+                <ul class="nav nav-pills" style="margin-bottom: 15px;">
+                        <li class="nav-item"><a class="nav-link" role="tab" data-toggle="pill" href="#tab-7" id='article_show' style="margin-right: 15px;">Article</a></li>
+
+                  <li class="dropdown" >
+                  <button class="btn btn-primary dropdown-toggle text-primary" data-toggle="dropdown" aria-expanded="false" type="button" style="height: 40px;background-color: rgb(237,237,237);">Relevance selection</button>
+
+                  <ul class="dropdown-menu">
+                  <li>
+                   <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name='relevance' value='All' onclick="get_ptype()"> All
+                    </label>
+                    </div>
+                  </li>
+                  <li>
+                  <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name='relevance' value='Relevant' onclick="get_ptype()"> Relevant
+                    </label>
+                  </div>
+                  </li>
+                   <li>
+                  <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name='relevance' value='Irrelevant' onclick="get_ptype()"> Irrelevant
+                    </label>
+                  </div>
+
+                  </li>
+
+ 
+
+               </ul>
+               </li>
+
+                    </ul>
+
+                    <div class="tab-content">
+                        <div class="tab-pane" role="tabpanel" id="tab-7">
+                            <div role="tablist" id="accordion-1">
+                                <div class="card border-white">
+                                     <!-- #data-toggle="collapse"  aria-expanded="tue" aria-controls="accordion-1 .item-1" href="#accordion-1 .item-1" -->
+                                     <div class="card-header" role="tab" style="background-color: rgb(233,236,239);">
+                                        <h5 class="mb-0"><a style="font-size: 16px;font-weight: 400;"><i class="fa fa-caret-right" style="font-size: 16px;"></i>&nbsp;Search Outcome</a></h5>
+                                    </div>
+
+                                    <div class="collapse show item-1" role="tabpanel" data-parent="#accordion-1">
+                                        <div class="card-body">
+
+                                            <ul class="list-group" role="tabpanel" data-parent="#breadcrumb-1" style="margin-right: -20px;margin-left: -20px;">
+
+
+{%for i in rank%}
+  {% set title=records[i]['title'] %}
+  {% set doi=records[i]['doi'] %}
+  {% set score=records[i]['score'] %}
+  {% set meta=records[i]['meta']%}
+  {% set abs_content=records[i]['abs'] %} 
+
+  <li class="list-group-item" id="li_{{i}}"  style='display:block'>
+  <h5 style="margin-bottom: 15px;">
+  <span style="text-decoration: underline;" id='title_span_{{i}}' onclick="Javascript:hide_show({{i}})" {{ title|safe }} </span>
+  
+  <button class="btn btn-primary btn-sm border rounded-0 border-light" type="button" style="background-color: #ad00ff;color: #ffffff;margin-right: 0px;margin-left: 20px;padding-top: 2px;padding-bottom: 2px;padding-right: 10px;padding-left: 10px;font-size: 12px;" onclick="javascript:document.getElementById('search_content').value = {{i}};">DOC: {{ i }}</button> <button class="btn btn-primary btn-sm border rounded-0 border-light" type="button" style="background-color: #0000ff;color: #ffffff;margin-right: 0px;margin-left: 20px;padding-top: 2px;padding-bottom: 2px;padding-right: 10px;padding-left: 10px;font-size: 12px;" onclick="javascript:window.open('https://doi.org/{{doi}}'); ">DOI</button>
+
+
+</h6>
+
+  <small class="d-lg-flex justify-content-lg-start" style="color: #999999;"> Score: {{ score }}</small>
+  <small class="d-lg-flex justify-content-lg-start" style="color: #999999;"> {{ meta|safe }}</small>
+  
+  <span id='{{i}}' style='display:none;margin-top: 20px'>{{ abs_content.decode('utf-8')|safe }} </span>
+
+
+  <div class="row">
+   <div class="col-lg-5">
+    <div class="btn-group btn-group-sm" role="group">
+     {% if i in relevance%}
+       {% set rel=relevance[i]%}
+       {% if rel=='1' %}
+        <button id="btn_r_{{i}}" class="btn btn-light" type="button" onclick='javascript:btn_bg_color(this.id);' style="padding: 3px 12px;background-color: #007bff;color: #ffffff"><i class="fa fa-caret-up" style="font-size: 16px;"></i>&nbsp;Relevant</button>
+        <button id="btn_ir_{{i}}" class="btn btn-light" type="button" backgroundColor="#ffffff" color="#000000" onclick='javascript:btn_bg_color(this.id);' style="background-color: #C0C0C0;color: #000000;margin-left: 1px;padding: 3px 12px;"><i class="fa fa-caret-down" style="font-size: 16px;"></i>&nbsp;Irrelevant</button>
+
+       {% else %}
+        <button id="btn_r_{{i}}" class="btn btn-light" type="button" onclick='javascript:btn_bg_color(this.id);' style="background-color: #C0C0C0;color: #000000;padding: 3px 12px;"><i class="fa fa-caret-up" style="font-size: 16px;"></i>&nbsp;Relevant</button>
+        <button id="btn_ir_{{i}}" class="btn btn-light" type="button" onclick='javascript:btn_bg_color(this.id);' style="background-color: #007bff;color: #ffffff;margin-left: 1px;padding: 3px 12px;"><i class="fa fa-caret-down" style="font-size: 16px;"></i>&nbsp;Irrelevant</button>
+       {% endif %}  
+     {%else%}
+       <button id="btn_r_{{i}}" class="btn btn-light" type="button" onclick='javascript:btn_bg_color(this.id);' style="padding: 3px 12px;"><i class="fa fa-caret-up" style="font-size: 16px;"></i>&nbsp;Relevant</button>
+       <button id="btn_ir_{{i}}" class="btn btn-light" type="button" onclick='javascript:btn_bg_color(this.id);' style="margin-left: 1px;padding: 3px 12px;"><i class="fa fa-caret-down" style="font-size: 16px;"></i>&nbsp;Irrelevant</button>
+ 
+     {% endif %}
+     
+       <button id="btn_hide_{{i}}" class="btn btn-light" type="button" onclick="Javascript:hide_show({{i}})" style="display:none;background-color:#ff8c00;margin-left: 1px;padding: 3px 12px;">&nbsp;Hide</button>
+    </div>
+   </div>
+  </div>
+ </li>
+  
+{%endfor%} 
+
+
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card border-white" style="display: none;">
+                        <div class="card-header" role="tab" style="background-color: rgb(233,236,239);">
+                            <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="false" aria-controls="accordion-1 .item-2" href="#accordion-1 .item-2" style="font-size: 16px;font-weight: 400;"><i class="fa fa-caret-down" style="font-size: 16px;"></i>&nbsp;Backup</a></h5>
+                        </div>
+                        <div class="collapse item-2" role="tabpanel" data-parent="#accordion-1">
+                            <div class="card-body">
+                                <ul class="list-group" role="tabpanel" data-parent="#breadcrumb-1" style="margin-right: -20px;margin-left: -20px;">
+                                    <li class="list-group-item" id="irrelevant">
+                                        <h6 style="margin-bottom: 0px;"><a href="MyRepository-PreviewDocument.html"><span style="text-decoration: underline;">Available for use</span></a><button class="btn btn-primary btn-sm border rounded-0 border-light"
+                                                type="button" style="background-color: #ad00ff;color: #ffffff;margin-right: 0px;margin-left: 20px;padding-top: 2px;padding-bottom: 2px;padding-right: 10px;padding-left: 10px;font-size: 12px;">Article ID</button><br></h6>
+                                        <small class="d-lg-flex justify-content-lg-start" style="color: #999999;">Column 1:</small>
+                                        <small class="d-lg-flex justify-content-lg-start" style="color: #999999;">Column 2:</small>
+                            </div>
+                            </li>
+
+
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+    <div class="tab-pane active" role="tabpanel" id="tab-8">
+        <div role="tablist" id="accordion-2">
+
+    </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <nav class="d-lg-flex justify-content-lg-center" style="padding-top: 10px;">
+                <ul class="pagination" style="display: none;">
+                    <li class="page-item"><a class="page-link" href="#">Top</a></li>
+                    <li class="page-item"><a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">»</span></a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    </div>
+    <div class="col-md-6 col-lg-4"></div>
+    </div>
+    </div>
+    </div>
+    <div class="footer-clean">
+        <footer>
+            <div class="container">
+                <div class="row justify-content-center">
+                    
+                    <div class="col-sm-4 col-md-3 item">
+                        <h3>COVID-19 Resource</h3>
+                        <ul>
+                            <li><a href="https://icite.od.nih.gov/covid19/search/">COVID-19 Protfolio(NIH)</a></li>
+                            <li><a href="https://ir.nist.gov/covidSubmit/">TREC-COVID</a></li>
+                            <li><a href="https://www.semanticscholar.org/cord19">CORD-19 Research Dataset</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-sm-4 col-md-3 item">
+                        <h3>About</h3>
+                        <ul>
+                            <li><a href="https://www.uc.edu">University of Cincinnati</a></li>
+                            <li><a href="https://med.uc.edu/bmi/labs/iCDCU">iCDCU Lab</a></li>
+                            <li><a href="https://www.uchealth.com/">UC Health</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-sm-4 col-md-3 item">
+                        <h3>Publication</h3>
+                        <ul>
+                            <li><a href="https://trec.nist.gov/pubs/trec27/papers/MedIER-PM.pdf">TREC-PM 2018</a></li>
+                            <li><a href="https://trec.nist.gov/pubs/trec28/papers/CincyMedIR.PM.pdf">TREC-PM 2019</a></li>
+
+                        </ul>
+                    </div>
+ 
+                     
+                    <div class="col-lg-3 item social"><a href="#"><i class="icon ion-social-facebook"></i></a><a href="#"><i class="icon ion-social-twitter"></i></a><a href="#"><i class="icon ion-social-snapchat"></i></a><a href="#"><i class="icon ion-social-instagram"></i></a>
+                        <p class="copyright">iCDCU © 2020</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script src="/static/assets/js/jquery.min.js"></script>
+    <script src="/static/assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/static/assets/js/Sidebar-Menu.js"></script>
+    <script src="/static/assets/js/menu.js"></script>
+    <script  src="/static/assets/js/function.js"></script>
+</body>
+
+</html>

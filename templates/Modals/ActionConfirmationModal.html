@@ -1,0 +1,52 @@
+{% macro exportHTML() %}
+    <div class="modal fade" id="confirmActionModal" tabindex="-1" style = "z-index: 1052;" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class = "modal-header">
+                    <h4 class="modal-title" id="actionTitle"></h4>
+                    <div>
+                        <button type="button" id = "dismissActionButton" class="close" id data-dismiss="modal">
+                            &times;
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div id = "actionDescription">
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <div id = "confirmActionModalSpinner" style = "display:none" class = "spinner-border text-primary" role = "status">
+                        <span class="sr-only"> Loading...</span>
+                    </div>
+                    <button type="button" id = "confirmActionButton" class="btn btn-danger float-right" id="modal-btn-si">Yes</button>
+                    <button type="button" id = "cancelActionButton" data-dismiss = "modal" class="btn btn-primary float-right" id="modal-btn-no">No</button>
+                    <p style = "display: none;" id = "confirmActionModalMessage"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+
+{% macro exportScript ()%}
+    <script>
+        function openAskForConfirmationModal (action_title, action_description, yes_action, no_action = function () {}) {
+            // open the confirmation popup. If the user click 'Yes', execute the yes_action
+            // if the user click 'No', execute the no_action
+            $ ("#actionTitle").text (action_title)
+            $ ("#actionDescription").text (action_description)
+            $ ("#confirmActionModalMessage").text ("")
+            $ ("#confirmActionModalMessage").hide()
+            $ ("#confirmActionButton").unbind ('click')
+            $ ("#cancelActionButton").unbind ('click')
+            $ ("#dismissActionButton").unbind ('click')
+            $ ("#confirmActionButton").click (yes_action)
+            $ ("#cancelActionButton").click (no_action)
+            $ ("#dismissActionButton").click (no_action)
+            $ ("#confirmActionModal").modal ("show")
+        }
+        
+    </script>
+
+{% endmacro %}

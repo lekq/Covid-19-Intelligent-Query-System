@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>COVID-19 Intelligent Query System</title>
+    <link rel="stylesheet" href="/static/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/assets/fonts/fontawesome-all.min.css">
+    <link rel="stylesheet" href="/static/assets/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/assets/fonts/ionicons.min.css">
+    <link rel="stylesheet" href="/static/assets/fonts/fontawesome5-overrides.min.css">
+    <link rel="stylesheet" href="/static/assets/css/divider-text-middle.css">
+    <link rel="stylesheet" href="/static/assets/css/Footer-Clean.css">
+    <link rel="stylesheet" href="/static/assets/css/Login-Box-En.css">
+    <link rel="stylesheet" href="/static/assets/css/Navigation-with-Button.css">
+    <link rel="stylesheet" href="/static/assets/css/Navigation-with-Search.css">
+    <link rel="stylesheet" href="/static/assets/css/Newsletter-Subscription-Form.css">
+    <link rel="stylesheet" href="/static/assets/css/Sidebar-Menu-1.css">
+    <link rel="stylesheet" href="/static/assets/css/Sidebar-Menu.css">
+    <link rel="stylesheet" href="/static/assets/css/SIdebar-Responsive-2-1.css">
+    <link rel="stylesheet" href="/static/assets/css/SIdebar-Responsive-2.css">
+    <link rel="stylesheet" href="/static/assets/css/styles.css">
+    <link rel="stylesheet" href="/static/assets/css/menu.css">
+
+    <link rel="stylesheet" href="/static/js/slider/rzslider.css" />
+    <script data-require="angular.js@1.6.0" data-semver="1.6.0" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.0/angular.js"></script>
+    <script data-require="ui-bootstrap@*" data-semver="2.2.0" src="https://cdn.rawgit.com/angular-ui/bootstrap/gh-pages/ui-bootstrap-tpls-2.2.0.js"></script>
+    <link rel="stylesheet" href="/static/js/slider/style.css" />
+    <script src="/static/js/slider/rzslider.js"></script>
+    <script src="/static/js/slider/script.js"></script>
+
+    <link rel="stylesheet" href="/static/assets/css/menu_style.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="/static/assets/js/jquery.blockUI.min.js"></script>
+    <style>
+    hr.new {
+     border: 1px solid white;
+    }
+
+    .pub_type { 
+      margin-top:18px;
+      margin-bottom:10px;
+      color: #919191; 
+      font-weight: bold; 
+      line height:24px; 
+      font-size: 16px; 
+    }
+
+     .doc_id {
+      margin-top:18px;
+      margin-bottom:10px;
+      color: #007bff;
+      font-weight: bold;
+      line height:24px;
+      font-size: 16px;
+    }
+   
+    .title {
+      margin-top:10px;
+      color: #212529;
+      font-weight: bold;
+      line height:28px;
+      font-size: 18px;
+    }
+
+ 
+    .first_para {
+      margin-top:10px;
+      margin-bottom:5px;
+      color: #212529;
+      font-weight: normal;
+      line height:21px;
+      font-size: 14px;
+    }
+
+    .meta_data {
+      margin-top:10px;
+      color: #656565;
+      font-weight: normal;
+      line height:24px;
+      font-size: 14px;
+    }
+
+    .meta_citation {
+      color: #656565;
+      font-weight: normal;
+      line height:24px;
+      font-size: 14px;
+    }
+ 
+    .abs_content {
+      margin-top:10px;
+      margin-bottom:15px;
+      color: #212529;
+      font-weight: normal;
+      line height:24px;
+      font-size: 14px;
+    }
+
+    #top_Btn {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 30px;
+    z-index: 99;
+    font-size: 18px;
+    border: none;
+    outline: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    padding: 15px;
+    border-radius: 4px;
+   }
+
+   #top_Btn:hover {
+    background-color: #555;
+   }
+
+   #top_menu{
+    position: fixed;
+    left: 200px;
+   }
+
+  li[name="record_block"]:hover {
+    background-color:#f7f7f7;
+  }
+
+  .pointer-link {
+    cursor: pointer;
+  }
+
+
+  *[id^='load_'] {
+   width: 200px;
+   color: #fff;
+   display: block;
+   text-align: center;
+   margin: 20px auto;
+   padding: 10px;
+   border-radius: 10px;
+   border: 1px solid transparent;
+   background-color: blue;
+   transition: .3s;
+  }
+
+  *[id^='load_']:hover {
+   color: blue;
+   background-color: #fff;
+   border: 1px solid blue;
+   text-decoration: none;
+  }
+
+   
+    </style>
+    <script>
+    
+    var show_ele=[];
+    var show_ele_date=[];
+
+    //alert center
+    $("<style type='text/css'>#boxMX{display:none;background: #333;padding: 10px;border: 2px solid #ddd;float: left;font-size: 4.8em;position: fixed;top: 50%; left: 50%;z-index: 99999;box-shadow: 0px 0px 20px #999; -moz-box-shadow: 0px 0px 20px #999; -webkit-box-shadow: 0px 0px 20px #999; border-radius:6px 6px 6px 6px; -moz-border-radius: 6px; -webkit-border-radius: 6px; font:16px Arial, Helvetica, sans-serif; padding:6px 6px 4px;width:300px; color: white;}</style>").appendTo("head");
+
+    function alertMX(t){
+      $( "body" ).append( $( "<div id='boxMX'><p class='msgMX'></p><hr class='new'><p align='right'  class='pointer-link'>Close</p></div>" ) );
+      $('.msgMX').text(t); var popMargTop = ($('#boxMX').height() + 24) / 2, popMargLeft = ($('#boxMX').width() + 24) / 2; 
+      $('#boxMX').css({ 'margin-top' : -popMargTop,'margin-left' : -popMargLeft}).fadeIn(600);
+      $("#boxMX").click(function() { $(this).remove(); record_msg(t); record_msg('close alert button');}); 
+      
+    };
+
+    //confirmation center
+    $("<style type='text/css'>#boxMX1{display:none;background: #333;padding: 10px;border: 2px solid #ddd;float: left;font-size: 4.8em;position: fixed;top: 50%; left: 50%;z-index: 99999;box-shadow: 0px 0px 20px #999; -moz-box-shadow: 0px 0px 20px #999; -webkit-box-shadow: 0px 0px 20px #999; border-radius:6px 6px 6px 6px; -moz-border-radius: 6px; -webkit-border-radius: 6px; font:16px Arial, Helvetica, sans-serif; padding:6px 6px 4px;width:300px; color: white;}</style>").appendTo("head");
+
+    function alert_Confirm(t,subject,note){ //note is opened for different variables
+     $( "body" ).append( $( "<div id='boxMX1'><p class='msgMX1'></p><hr class='new'><p align='right'><button type='button' id='cancel_btn')>Cancel</button>&nbsp;&nbsp;&nbsp;<button type='button' id='ok_btn'>OK</button></p></div>" ) );
+    $('.msgMX1').text(t); var popMargTop = ($('#boxMX1').height() + 24) / 2, popMargLeft = ($('#boxMX1').width() + 24) / 2;
+    $('#boxMX1').css({ 'margin-top' : -popMargTop,'margin-left' : -popMargLeft}).fadeIn(600);
+    $("#boxMX1").click(function() { $(this).remove(); });  
+   
+
+   $('#ok_btn, #cancel_btn').click(function () {
+    if (this.id == 'ok_btn') {
+      record_msg(t+" Click-> ok");
+
+      if (subject=='save'){
+         document.getElementById("saveForm").submit();
+         var sel_val=document.getElementById("s_focus").value;
+         var new_id="t_id_link_"+note;
+         var clear_id="clear_task_"+note;
+
+         if (document.getElementById(new_id) !=null){
+          document.getElementById(clear_id).style.display='none';
+          document.getElementById(new_id).style.display='none'; 
+         } 
+         var task_li="study_li_"+note;
+         var task_text=document.getElementById(task_li).innerHTML;
+         console.log ("<a href='/search?search_content="+'{{a_id}}'+"&task_id="+note+"&q_focus="+sel_val+"' id='t_id_link_"+note+"'>"+task_text+"</a><button type='button' id=clean_task_"+note+" class='close' aria-label='Close'><span aria-hidden='true' id=clear_task_"+note+">")
+         $('#my_repo').after("<p style='margin-bottom: 10px;' id='3'><a href='/search?search_content="+'{{a_id}}'+"&task_id="+note+"&q_focus="+sel_val+"' id='t_id_link_"+note+"'>"+task_text+"</a><button type='button' id=clean_task_"+note+" class='close' aria-label='Close'><span aria-hidden='true' id=clear_task_"+note+">&empty;</span></button></p>");
+         alertMX('Successfully saved in the '+task_text+' repository.');
+      }
+
+      else if (subject=='clean_task'){
+          $.ajax({
+            url: "/delete_task", //clean task and its related reocrds, but keep task name in the repo
+            type: "get",
+            data: {jsdata: note}, //{jsdata: note.replace("clean_task_","")}
+            success: function(response) {
+             
+             alertMX('The task has been cleaned.');
+             
+             if (note!='clear_all_btn'){
+              var d_t_id="#"+"t_id_link_"+note.replace("clean_task_","");
+              var c_btn_id="#"+note;
+             
+              $(d_t_id).remove();
+              $(c_btn_id).remove();
+
+               var matched = $('[id*=t_id_link]');
+  
+              if (matched.length==0)
+               $("#my_repo_div").empty(); 
+               
+             }else{
+              $("#my_repo_div").empty();              
+ 
+              }
+            },
+            error: function(xhr) {
+             alertMX('Data delection is fail, please contact system administrator!');
+            }
+         });
+
+      }
+    
+    
+      else if (subject=='delete_task'){
+          $.ajax({
+            url: "/delete_task", //clean task and its related reocrds, but keep task name in the repo
+            type: "get",
+            data: {jsdata: note}, //{jsdata: note.replace("delete_task_","")}
+            success: function(response) {
+             var task_li_id="#task_li_"+note.replace("delete_task_","");
+             var task_id=note.replace("delete_task_","");
+             $(task_li_id).remove();
+
+             //remove history
+             var d_t_id="#"+"t_id_link_"+note.replace("delete_task_","");
+             var c_btn_id="#"+note;
+             var icon_id="#"+note.replace("delete_task_","clear_task_");
+          
+             $(icon_id).remove();
+             $(d_t_id).remove();
+             $(c_btn_id).remove();
+ 
+             alertMX('The task has been deleted.');
+             record_msg('Delete Task: '+task_id+' Success');
+
+            },
+            error: function(xhr) {
+              alertMX('Data delection is fail, please contact system administrator!');
+              record_msg('Delete Task: '+task_id+' Fail');
+            }
+         });
+
+      }
+
+    }
+    else if (this.id == 'cancel_btn') {
+       record_msg(t+" Click: cancel");
+      
+    }
+  });
+
+};
+
+
+    </script>
+
+    <script>
+    var task_ary=[];
+    var task_focus=[];
+    var task_alias=[];
+    $(document).ready(function(){
+        $(document).on('click','.close',function(){ 
+
+          var d_value = $(this).attr("id");
+          
+          if (d_value.startsWith("clean_task") || d_value=='clear_all_btn') 
+           alert_Confirm("You are not able to recover this data removal , are you sure?","clean_task",d_value);
+          else if (d_value.startsWith("delete_task"))
+           alert_Confirm("You are not able to recover this task deletion , are you sure?","delete_task",d_value);
+          else{
+            alertMX('Command Error!');
+            return false;
+           } 
+        });
+    }); 
+
+   $(document).on("keypress", 'form', function (e) {
+    var code = e.keyCode || e.which;
+    if (code == 13) {
+        e.preventDefault();
+        document.getElementById('search_btn').click(); 
+    }
+   });
+
+   function check_field(){
+       if (document.getElementById("search_content").value=='')
+          {
+            alertMX('You have to input search content!');
+            return false;
+
+          }
+       else if(document.getElementById('concept').checked && /\D/.test(document.getElementById("search_content").value)) 
+          {
+            alertMX('The system does not support this feature.');
+            return false;
+
+          }
+ 
+       else{
+          document.getElementById("process_div").style.display='block';
+          var search_value=document.getElementById("search_content").value;  
+          document.getElementById("search_content").value=search_value.replace(/'/g,'');
+          }   
+   }
+
+   </script>
+   <script>
+
+    function create_new_task() {
+               var new_task_name = prompt("Enter new task name (3-20 characters): ", "task name here");
+               
+               if(new_task_name!=null & (new_task_name.length>=3 & new_task_name.length<=20) & /^[a-zA-Z0-9 ]+$/.test(new_task_name)){
+
+                  var max_id = 0;
+                  $('#save_resp li a').each(function () {
+                    var url_ID = $(this).attr('id');
+                    console.log ($(this))       
+                    task_id=parseInt(url_ID.split("_")[2]);
+                     
+                    if (task_id>max_id)
+                       max_id=task_id;
+                    
+                  });
+                  max_id+=1;
+                  let newSubMenu = "<li id='task_li_"+max_id+"'><button onclick=javascript:change_task_name('"+max_id+"') style='border:none;background-color:Transparent;' id='rename_btn_"+max_id+"'><i class='fa fa-cog' aria-hidden='true' style='font-size: 14px;color:black'></i></button><a href='"+'javascript:check_relevance("'+max_id+'")'+"' style='padding-left: 20px' id=study_li_"+max_id+">"+new_task_name+"</a><button type='button' id=delete_task_"+max_id+" class='close' aria-label='Close'><span aria-hidden='true' >&times;</span></button></li>";
+                  $('#save_resp').append(newSubMenu );
+                              
+                  var update_info=max_id+"_"+new_task_name+"_add";
+                   
+                  $.ajax({
+                      url: "/update_task",
+                      type: 'get',
+                      data: {jsdata: update_info},
+                      success: function(response) {
+                        console.log (response)
+                         if(response=='ok'){
+                           alertMX("Create New Task Success.");
+                           record_msg('Create Task: '+max_id+' Success');
+                         }
+                         else{
+                           alertMX("DB Server Error."); 
+                           record_msg('Create Task: '+max_id+' Fail Due to Server Error');
+                         }
+                      },
+                      error: function(xhr) {
+                         alertMX("Create New Task Error.");
+                         record_msg('Create Task: '+max_id+' Fail');
+                      }
+                   });
+
+
+               }else
+                  alertMX('The task name length should be 3-20 characters and contains letter, digit and space only.');
+    }
+
+    function change_task_name(link_id) {
+               
+               var n_link_id="study_li_"+link_id;
+               var history_link_id="t_id_link_"+link_id;
+               var current_task_name=document.getElementById(n_link_id).innerText;
+               var new_task_name = prompt("Original task name: "+current_task_name+".  Enter new task name (3-20 characters) : ", "task name here");
+                
+               if(new_task_name!=null & (new_task_name.length>=3 & new_task_name.length<=20) & /^[a-zA-Z0-9 ]+$/.test(new_task_name)){
+                  document.getElementById(n_link_id).innerText = new_task_name; 
+                  
+                  if (document.getElementById(history_link_id))
+                     document.getElementById(history_link_id).innerText = new_task_name;
+                  var update_info=link_id+"_"+new_task_name+"_update";
+ 
+                  $.ajax({
+                      url: "/update_task",
+                      type: 'get',
+                      data: {jsdata: update_info},
+                      success: function(response) {
+                         if(response=='ok'){
+                           alertMX("Update Task Name Success.");
+                           record_msg('Update Task: '+new_task_name+' Success'); 
+                         }
+                         else{
+                           alertMX("DB Server Error.");
+                           record_msg('Update Task: '+current_task_name+' Fail Due to Sever Error');
+                         }
+                      },
+                      error: function(xhr) {
+                         alertMX("Update Task Name Error.");
+                         record_msg('Update Task: '+current_task_name+' Fail');
+                      }
+                  });
+
+               }else
+                  alertMX('The task name length should be 3-20 characters and contains letter, digit and space only.');
+    }
+
+
+   </script>
+
+  <script>
+
+   function load_more_check(limit) {
+
+              var rel_ele=[];
+              var ir_ele=[];
+
+              var spans = document.getElementsByTagName("span");
+              var sel_count=0;
+              for(i=0;i<spans.length;i++)
+               {
+                 if (spans[i].id.includes('title_span')){
+                 var li_id=spans[i].id.replace("title_span","li");
+                 var sel_id=li_id.replace("li_","");
+                 var btn_id_r=spans[i].id.replace("title_span","btn_r");
+                
+                 if (document.getElementById(btn_id_r).style.backgroundColor === "rgb(0, 123, 255)"){
+                      rel_ele.push(li_id);
+                     }
+                  }
+               }
+                 var load_id='load_'+((limit/10)+1);
+                 document.getElementById(load_id).style.display='none';
+                 return true;
+    }
+
+    function check_relevance(task_id) {
+
+   
+              var rel_ele=[];
+              var ir_ele=[];
+              
+              var spans = document.getElementsByTagName("span");
+              var sel_count=0;
+              var sels='';
+              var time_list='';
+               for(i=0;i<spans.length;i++)
+               {
+                 if (spans[i].id.includes('title_span')){
+                 var li_id=spans[i].id.replace("title_span","li");
+                 var sel_id=li_id.replace("li_","");
+                 var btn_id_r=spans[i].id.replace("title_span","btn_r");
+                 var btn_id_ir=spans[i].id.replace("title_span","btn_ir");
+                 if (document.getElementById(btn_id_r).style.backgroundColor === "rgb(0, 123, 255)"){
+                      rel_ele.push(li_id);
+                      sels+=sel_id+"_1||";
+                      time_list+=document.getElementById(btn_id_r).value+"||";
+                     }
+                  } 
+               }
+               time_list=time_list.substring(0,time_list.length-2);
+ 
+               sel_count=rel_ele.length;
+               if (sel_count<=0 ){
+                     alertMX ("You have to annotate at least 1 article.");
+                     return false;
+               }else{
+                    sels=sels.substring(0,sels.length-2);
+                    document.getElementById("all_sels").value=sels;
+                    document.getElementById("task_id").value=task_id;
+                    
+                    var radios = document.getElementsByName('optradio');
+
+                     for (var i = 0, length = radios.length; i < length; i++) {
+                       if (radios[i].checked) {
+                          document.getElementById("s_focus").value=radios[i].value; 
+                          // only one radio can be logically checked, don't check the rest
+                          break;
+                         }
+                    }
+
+                    alert_Confirm('Please confirm that you want to overwrite existing data for this task.','save',task_id); 
+
+               }
+    }
+
+   var arrayWithElements = new Array();
+   document.onclick = clickListener;
+   
+   function clickListener(e) 
+    {   
+    var clickedElement=(window.event)
+                        ? window.event.srcElement
+                        : e.target,
+        tags=document.getElementsByTagName(clickedElement.tagName);
+
+   
+                     
+    for(var i=0;i<tags.length;++i)
+    {
+      var today = new Date();
+      var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+      var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+      var dateTime = date+' '+time;
+      var tag_track='';
+
+      if(tags[i]==clickedElement)
+      {
+        if (tags[i].tagName=='INPUT'){ 
+         tag_track=tags[i].value;
+         if (tag_track=='All_ptype' || tag_track=='Journal' || tag_track=='Review' || tag_track=='Preprint' || tag_track=='Case Reports' || tag_track=='All' || tag_track=='Relevant' || tag_track=='Irrelevant')
+             tag_track=tag_track+"_"+tags[i].checked;
+
+         
+        }
+        else if (tags[i].tagName=='SPAN' || tags[i].tagName=='I'){
+         tag_track=tags[i].id;
+        
+        }
+        else if (tags[i].tagName=='BUTTON'){
+         if (tags[i].id){
+          tag_track=tags[i].id;
+         
+           if (tags[i].id=='search_btn'){ 
+            var radios = document.getElementsByName('optradio');
+                     var radio_value='';
+                     for (var i = 0, length = radios.length; i < length; i++) {
+                       if (radios[i].checked) {
+                          radio_value=radios[i].value;
+                          // only one radio can be logically checked, don't check the rest
+                         }
+                    }
+              tag_track="Main_"+tag_track+"_"+document.getElementById('search_content').value;
+           }
+         }
+         else if (tags[i].name){
+          tag_track=tags[i].name;
+         
+         } 
+        }
+        else{
+           tag_track=tags[i].textContent;
+            
+        }
+       
+ 
+         if (tag_track.length<=200 ){  //avoid garbage message
+          $.ajax({
+            url: "/save_record",
+            type: 'get',
+            data: {jsdata: tag_track},
+            success: function(response) {
+             console.log(response);
+            },
+            error: function(xhr) {
+             console.log('error message:' + xhr);
+            }
+          });
+        }
+      }    
+    }
+   }
+
+    function record_msg(msg_content)
+    {
+          $.ajax({
+            url: "/save_record",
+            type: 'get',
+            data: {jsdata: msg_content},
+            success: function(response) {
+             console.log(response);
+            },
+            error: function(xhr) {
+             console.log('error message:' + xhr);
+            }
+          });
+
+    }
+  
+    function citation_generation(article_source)
+    {
+          $.ajax({
+            url: "/citation_download",
+            type: 'get',
+            data: {jsdata: article_source},
+            success: function(response) {
+             if (response=='ok'){
+               window.location="/static/citation.bilb";
+               alertMX('Citation download is completed');
+             }
+             else
+               alertMX('Citation is not ready. Please try again!');               
+            },
+            error: function(xhr) {
+             console.log('error message:' + xhr);
+            }
+          });
+
+     }
+  
+    function get_ptype(){
+             var checkboxes = document.getElementsByName('ptype');
+             var high_citation_checkbox=document.getElementById("high_citation");
+
+             var checkbox_ary = [];
+             show_ele=[];
+
+             var spans = document.getElementsByTagName("span");
+ 
+ 
+             for (var checkbox of checkboxes) {
+                    if (checkbox.checked & checkbox.value=='All_ptype'){
+                      checkbox_ary.push("All_ptype");
+                    }
+                    else if (checkbox.checked & checkbox.value!='All_ptype'){
+                      checkbox_ary.push(checkbox.value);
+                    } 
+             }
+
+
+              if (checkbox_ary[0]=='All_ptype'){ //did not change this part, but changed below part 08/14
+              
+               //do nothing
+              }
+              else
+              {
+
+               if (checkbox_ary.length==4)
+                   {% if record_count >=30 %}
+                         document.getElementById("search_count").innerHTML = "Top 30 articles from {{record_count}} releated records";
+                   {% else %}
+                         document.getElementById("search_count").innerHTML = "Top {{record_count}} articles from {{record_count}} releated records";
+                   {% endif %}
+
+               
+               for(i=0;i<spans.length;i++)
+               {
+                 if (spans[i].id.includes('pub_type')){
+
+                 var li_id=spans[i].id.replace("pub_type","li");
+                 
+                  for (var j = 0; j < checkbox_ary.length; j++) { //Journal Article;Review will count twice
+                    if(spans[i].textContent.includes(checkbox_ary[j])){
+                      show_ele.push(li_id);
+                    }
+                  }
+                  
+ 
+                }
+               }
+             
+             show_ele = [...new Set(show_ele)];  //Remove duplicate IDs
+            
+
+             if (show_ele_date.length>0){ 
+              filteredArray = show_ele.filter(value => show_ele_date.includes(value)); //find array intersection between publication type and publication date
+              show_ele=filteredArray
+             }
+
+             get_show_ids=get_relevance();
+             var selected_len=show_ele.length;
+             if (selected_len>30)
+                selected_len=30; //due to Journal and Journal review are duplicated
+
+             document.getElementById("search_count").innerHTML = selected_len+" articles were selected from this change";
+             if (selected_len==0){ //remove all buttons if no match articles
+                {% if rank|length >10  %}
+                 document.getElementById('load_2').click();
+                {% endif %}
+                {% if rank|length >20 %}
+                 document.getElementById('load_3').click();
+                {% endif %}
+             }  
+  
+             for (i=0;i<show_ele.length;i++){ 
+                   var li_id=show_ele[i]; 
+                    
+                   if (get_show_ids.length>0){
+                    if (get_show_ids.includes(li_id))        
+                     document.getElementById(li_id).style.display = "block";  
+                   }else
+                     document.getElementById(li_id).style.display = "block";
+              }
+                  
+      }
+   }
+  
+
+
+ 
+    function high_citation_click(){
+     var high_citation_checkbox=document.getElementById("high_citation");
+     
+     if (high_citation_checkbox.checked){
+               //uncheck all other checkboxes
+               var uncheck=document.getElementsByName('ptype');
+
+               for(var i=0;i<uncheck.length;i++)
+               {
+                if(uncheck[i].type=='checkbox')
+                  if(uncheck[i].checked==true)
+                     uncheck[i].click();
+                     uncheck[i].disabled=true;   
+               }
+
+               var spans = document.getElementsByTagName("span");
+               var selected_count=0
+               for(i=0;i<spans.length;i++)
+               {
+                 if (spans[i].id.includes('citation_count_')){
+                  var citation_number=parseInt(spans[i].id.split("_")[3]);
+                  if (citation_number>=55){ //Top 10% articles (at least 55 citations) with highest citation numbers
+                   selected_count+=1;
+                   var li_id="li_"+spans[i].id.split("_")[2];
+                   document.getElementById(li_id).style.display = "block";
+                  }
+                 }
+               }
+               document.getElementById("search_count").innerHTML = selected_count+" articles were selected from this change";
+               document.getElementById("date_filter_btn").disabled=true;
+
+               {% if rank|length >10  %}
+                document.getElementById('load_2').click();
+               {% endif %}
+               {% if rank|length >20 %}
+                document.getElementById('load_3').click();
+               {% endif %}
+     }
+     else{
+             document.getElementById("date_filter_btn").disabled=false;
+
+             var uncheck=document.getElementsByName('ptype');
+
+               for(var i=0;i<uncheck.length;i++)
+               {
+                if(uncheck[i].type=='checkbox')
+                   uncheck[i].disabled=false;
+                 if(uncheck[i].checked==false)
+                    uncheck[i].click();
+               }
+             //return to original condition
+             {% if rank|length >10  %}
+              document.getElementById('load_2').style.display='block';
+              document.getElementById('span2').style.display='none';
+             {% endif %}
+             {% if rank|length >20 %}
+              document.getElementById('load_3').style.display='none';
+              document.getElementById('span3').style.display='none';
+             {% endif %}
+         }
+ 
+   }
+
+    function get_relevance(){
+             var checkboxes = document.getElementsByName('relevance');
+             var checkbox_ary = [];
+             var rel_ele=[];
+             var ir_ele=[];
+             var show_ids=[];
+             var spans = document.getElementsByTagName("span");
+
+             for (var checkbox of checkboxes) {
+                    if (checkbox.checked & checkbox.value!='All'){
+                      checkbox_ary.push(checkbox.value);
+                    }
+             }
+              if (checkbox_ary[0]=='All'){
+
+               //do nothing
+
+              }
+              else
+              {
+               for(i=0;i<spans.length;i++)
+               {
+                 if (spans[i].id.includes('title_span')){
+                 var li_id=spans[i].id.replace("title_span","li");
+                 document.getElementById(li_id).style.display = "none"; //hide all
+                 var btn_id_r=spans[i].id.replace("title_span","btn_r");
+                 if (document.getElementById(btn_id_r).style.backgroundColor === "rgb(0, 123, 255)"){
+                      rel_ele.push(li_id);
+                     }
+                    
+                 }
+               }
+                  if (checkbox_ary.includes('Relevant')){
+                   for (i=0;i<rel_ele.length;i++){ //show some eles
+                    var li_id=rel_ele[i];
+                    document.getElementById(li_id).style.display = "block";
+                    show_ids.push(li_id);
+                   }
+                  }
+
+              }
+              return show_ids;
+
+    }
+
+ 
+    function update_search_field() {
+      if ('{{a_id}}'=='999998'){
+       
+       document.getElementById('search_content').value = '{{query_content|safe}}';
+       document.getElementById('a_id').value = '{{query_content}}';
+      }
+      else{
+       document.getElementById('search_content').value = '{{a_id|safe}}';
+      } 
+   }
+
+
+    function hide_show(ele_id) {
+     var x = document.getElementById(ele_id);
+     var btn_id="btn_hide_"+ele_id;
+     var first_para_id="first_para_"+ele_id;
+
+     var y= document.getElementById(btn_id);
+     var z= document.getElementById(first_para_id);
+     if (x.style.display === "none") {
+      record_msg('element_show');
+      x.style.display = "block";
+      y.style.display = "block";
+      z.style.display = "none";
+     } else {
+      record_msg('element_hide');
+      x.style.display = "none";
+      y.style.display = "none";
+      z.style.display = "block";
+     }
+    }
+
+    function btn_bg_color(btn_id){
+
+     var btn_color=document.getElementById(btn_id).style.backgroundColor;
+
+     if (btn_color === "rgb(0, 123, 255)"){ 
+      document.getElementById(btn_id).style.backgroundColor="rgb(192, 192, 192)";
+      document.getElementById(btn_id).style.color="black";
+     }else{
+      document.getElementById(btn_id).style.backgroundColor = "rgb(0, 123, 255)";
+      document.getElementById(btn_id).style.color="white";
+     }
+
+
+   }
+ 
+  //not use 
+  function cpTitle(txt_content) {
+   var input = document.createElement('textarea');
+   input.innerHTML = txt_content;
+   document.body.appendChild(input);
+   input.select();
+   var result = document.execCommand('copy');
+   document.body.removeChild(input);
+   alertMX("Copied the title: " + txt_content);
+   return result;
+  } 
+
+  // Auto logout after 15 mins (provide a warning after 14 mins) 
+  // Set timeout variables.
+  var timoutWarning = 840000; // Display warning in 14 Mins.
+  var timoutNow = 900000; // Timeout in 15 mins.
+  var logoutUrl = '/logout'; // URL to logout page.
+
+  var warningTimer;
+  var timeoutTimer;
+
+  // Start timers.
+  function StartTimers() {
+    warningTimer = setTimeout("IdleWarning()", timoutWarning);
+    timeoutTimer = setTimeout("IdleTimeout()", timoutNow);
+  }
+
+  // Reset timers.
+  function ResetTimers() {
+    clearTimeout(warningTimer);
+    clearTimeout(timeoutTimer);
+    StartTimers();
+    //$("#timeout").dialog('close');
+  }
+
+  // Show idle timeout warning dialog.
+  function IdleWarning() {
+    alertMX("You will be automatically logged out in 1 minute. To remain logged in move your mouse to close this window.");
+
+  }
+
+  // Logout the user.
+  function IdleTimeout() {
+    window.location = logoutUrl;
+  }
+ 
+   </script>
+
+</head>
+
+<body onload="javascript:document.getElementById('article_show').click();update_search_field();StartTimers();" onmousemove="ResetTimers();" ng-app="dateRangeDemo" ng-controller="dateRangeCtrl">
+
+<button onclick="topFunction()" id="top_Btn" title="Go to top">Go to Top</button>
+
+
+<script>
+
+//Get the button
+var mybutton = document.getElementById("top_Btn"); //myBtn
+
+// When the user scrolls down 20px from the top of the document, show the button
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+  if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+    mybutton.style.display = "block";
+  } else {
+    mybutton.style.display = "none";
+  }
+}
+
+// When the user clicks on the button, scroll to the top of the document
+function topFunction() {
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
+}
+</script>
+ 
+   <nav class="navbar navbar-light navbar-expand-md navigation-clean-button" style="height: 60px;">
+        <div class="container"><a class="navbar-brand" href="/home" target="_blank" onclick="javascript:record_msg('Back_to_index_btn')"><img src="/static/assets/img/IQS_logo.png" width="116" height="30"></a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse"
+                id="navcol-1">
+                <ul class="nav navbar-nav mr-auto"></ul>
+                <ul class="nav navbar-nav" style="display: none;">
+                    <li class="nav-item dropdown"><a class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false" href="#"><i class="far fa-bell" ></i></a>
+                        <div class="dropdown-menu" role="menu"><a class="dropdown-item" role="presentation" href="#">DSC Process</a><a class="dropdown-item" role="presentation" href="#">Like</a><a class="dropdown-item" role="presentation" href="#">Share</a></div>
+                    </li>
+                </ul>
+         <span class="navbar-text actions">
+<a class="btn btn-primary border rounded action-button" role="button" href="/static/QA_page/Q&A.html" style="margin-right: 10px;background: rgb(0,123,255);">Learn IQS</a>  
+<a class="btn btn-primary border rounded action-button" role="button" href="/logout" onclick="javascript:record_msg('logout_btn')" style='background-color:#007bff'>Logout</a></span></div>
+        </div>
+    </nav> <!-- rgb(65,65,65) ;margin-bottom: 15px;-->
+    <div  style="background-color:#1d212880;height: 70px;padding-bottom: 10px;margin-top: 0;padding-top: 10px;margin-bottom: 15px;">
+        <div class="container">
+            <form class="form-inline d-lg-flex justify-content-lg-start" action="/search" method="post" style="height: 40px;" onsubmit='return check_field()'>
+                <div class="radio">
+
+                 {% if query_focus=='term' %} 
+                  <label style="color:white"><input type="radio" name="optradio" value='term' id='term' checked>Term &nbsp;<i class="fa fa-question-circle-o" title="Search by input term(s) or document terms" style="font-size: 16px;color:white"></i></label>
+                 {% else %}
+                  <label style="color:white"><input type="radio" name="optradio" value='term' id='term'>Term &nbsp;<i class="fa fa-question-circle-o" title="Search by input term(s) or document terms" style="font-size: 16px;color:white"></i></label>
+                 {% endif %}
+ 
+                 </div>&nbsp;&nbsp;&nbsp;
+                 <div class="radio">
+                {% if query_focus=='concept' %}
+                 <label style="color:white"><input type="radio" name="optradio" value='concept' id='concept' checked>Concept (may be slower) &nbsp;<i class="fa fa-question-circle-o" title="Search by concepts of input term(s) or document" style="font-size: 16px;color:white"></i></label>
+                {% else %}
+                 <label style="color:white"><input type="radio" name="optradio" value='concept' id='concept' >Concept (may be slower) &nbsp;<i class="fa fa-question-circle-o" title="Search by input concepts of input term(s) or document" style="font-size: 16px;color:white"></i></label> 
+                {% endif %}
+
+                </div>&nbsp;&nbsp;&nbsp;
+ 
+
+                <input class="form-control" type="text" id="search_content" name="search_content" style="height: 40px;width: 350px;padding-right: 5px;padding-left: 5px;padding-top: 0px;padding-bottom: 0px;" placeholder="Free-text / PMID / System Document ID">
+                &nbsp;&nbsp;&nbsp;<button class="btn btn-primary border rounded action-button" type="submit" id='search_btn' style="background-color:#007bff;font-size: 16px;font-weight: normal;">Search</button>
+                <div class="spinner-border text-light" role="status" id="process_div" style="display: none;">
+                <span class="sr-only">Processing...</span>
+                </div>  
+           
+           </form>
+        </div>
+    </div>
+    <div style="margin-top: 0px;">
+        <div class="container">
+            <div class="row" style="margin-top: 0px;">
+
+             <div class="col-lg-3">
+                <div class="card" style="margin-top: 10px;margin-bottom: 10px;margin-left: 5px;"  id="top_menu">
+                        <div class="card-body" id="left_menu">
+
+                        <p style="margin-bottom: 2px;"><input type="checkbox" id='high_citation' value='high_citation' onclick="high_citation_click()" >&nbsp;High Citation Articles <i class="fa fa-question-circle-o" title="Top 10% articles with highest citation numbers" style="font-size: 16px;color:#919191"></i></p>
+                        <hr>
+ 
+                        <h6 class="card-title" style="margin-bottom: 2px;"><b>Publication Type</b></h4>
+                        <hr>
+                        
+                        
+                        <p style="margin-bottom: 10px;"><input type="checkbox" name='ptype' value='Preprint' onclick="get_ptype()" checked>&nbsp;Preprint&nbsp;<i class="fa fa-question-circle-o" title="bioRxiv, medRxiv, SSRN, arXiv, ChemRxiv and Rsearch Square" style="font-size: 16px;color:#919191"></i></p>
+                        <p style="margin-bottom: 10px;"><input type="checkbox" name='ptype' value='Review' onclick="get_ptype()" checked>&nbsp;Review</p>
+                        <p style="margin-bottom: 10px;"><input type="checkbox" name='ptype' value='Case Reports' onclick="get_ptype()" checked>&nbsp;Case Reports</p>
+                        <p style="margin-bottom: 10px;"><input type="checkbox" name='ptype' value='Journal' onclick="get_ptype()" checked>&nbsp;Journal Article</p>
+                        <hr>
+                        <h6 class="card-title" style="margin-bottom: 2px;"><b>Publication Date</b></h4> 
+                        <hr>
+                        <rzslider
+                         rz-slider-model="dateRangeSlider.minValue"
+                         rz-slider-high="dateRangeSlider.maxValue"
+                         rz-slider-options="dateRangeSlider.options">
+                        </rzslider><br>
+                        <center><button ng-click= "getvalue()" id='date_filter_btn' name='date_filter_btn' style='border-radius: 0px;'>Run Date Filter</button></center>
+
+                         <p>{{start_date}}</p>
+                         <p>{{end_date}}</p> 
+
+                        <hr> 
+ 
+                        <h6 class="card-title" style="margin-bottom: 2px;" id='my_repo'><b>Load My Repository</b></h4>
+                        <div id='my_repo_div'>
+                        <script>
+                        
+                        {%for i in t_list%}
+                           {% set query_id=t_list[i] %}
+                           
+                           if ('{{ query_id }}'!= null){
+                            q_tmp='{{ query_id }}'.split("_");
+                            q_id=q_tmp[0];
+                            q_focus=q_tmp[1];
+                            q_alias=q_tmp[2]; //task alias
+
+                            task_ary['{{i}}'] = q_id;
+                            task_focus['{{i}}'] = q_focus;
+                            task_alias['{{i}}'] = q_alias;
+                           } 
+                        {%endfor%}
+                         
+                        for (var key in task_ary) {
+                         if (task_ary[key]!=0){ //Only show when there are records in the task
+                          var task_name=task_alias[key]; 
+                          var js_content="javascript:document.getElementById('process_div').style.display='block';";
+                          document.write("<p style='margin-bottom: 10px;' id='3'><a href='/search?search_content="+task_ary[key]+"&task_id="+key+"&q_focus="+task_focus[key]+"' id='t_id_link_"+key.trim()+"' onClick="+js_content+">"+task_name+"</a>");
+
+                          document.write("<button type='button' id=clean_task_"+key.trim()+" class='close' aria-label='Close'>");
+                          var t_id="clear_task_"+key;
+                          document.write("<span aria-hidden='true' id="+t_id+">&empty;</span></button></p>");
+                         }
+                        }
+                        
+                        {% if t_list|length >1 %}
+                          document.write("<p style='margin-bottom: 2px;' id='3'>All records<button type='button' id='clear_all_btn' class='close' aria-label='Close'><span aria-hidden='true' id='clear_all_tasks'>&empty;</span></button>");
+                        
+                        {% endif %}
+                        document.write("<hr><a class='d-lg-flex justify-content-lg-start' href='javascript:create_new_task()' style='text-align: center;'>+ New Repository</a>");
+
+                        {% if t_list|length >=1 %}
+                        
+                        document.write("<hr><p style='margin-bottom: 2px;' id='3'><a href='/annotation' id='export_all_records'>Export all records</a>");
+                        {% endif %}  
+                        </script>
+        
+
+                        </div>
+     
+                    </div>
+
+          
+                </div>
+            </div>
+
+                <div class="col-md-6 col-lg-9">
+                    <div class="row float-right">
+                        <div class="col"><iframe name="votar" style="display:none;"></iframe><form class="form-inline d-lg-flex justify-content-lg-start" target="votar" action="/save" method="post"  id="saveForm" name="saveForm" style="height: 40px;">
+
+ <ul class="nav nav-pills" style="margin-bottom: 15px;">
+
+                  <li class="dropdown" >
+                  <button class="btn btn-primary dropdown-toggle text-primary" data-toggle="dropdown" aria-expanded="false" type="button" onclick="javascript:record_msg('Save to MyRepository')" style="height: 40px;background-color: rgb(237,237,237);">&nbsp;&nbsp;Repository Management&nbsp;&nbsp;</button>
+
+
+                 <ul class="dropdown-menu" id='save_resp'>
+                 </ul>
+                 <script>
+                 var ul = document.getElementById("save_resp");
+                 var letters="";
+                 for (var key in task_ary) {
+                  var i=key; 
+               
+                  var li = document.createElement("li");
+                  var task_name=task_alias[key];
+                  
+                  li_txt="<button onclick=javascript:change_task_name('"+key+"') style='border:none;background-color:Transparent;' id='rename_btn_"+key+"'><i class='fa fa-cog' aria-hidden='true' style='padding-left: 10px;font-size: 14px;color:black'></i></button><a href='"+'javascript:check_relevance("'+i+'")'+"' style='padding-left: 20px' id=study_li_"+i+">"+task_name+"</a>&nbsp;&nbsp;<button type='button' id=delete_task_"+i+" class='close' aria-label='Close'><span aria-hidden='true' >&times;</span></button>";
+                  li.appendChild(document.createTextNode(li_txt));
+                  ul.appendChild(li);
+                  letters += "<li id='task_li_"+i+"'>"+ li_txt + "</li>";
+                 }
+                 document.getElementById("save_resp").innerHTML = letters;
+                 </script>
+                 </li>
+              </ul>
+
+
+<div class='dropdown'>
+<button class="btn btn-primary dropdown-toggle text-primary" data-toggle="dropdown" aria-expanded="false" type="button" style="display:none;height: 40px;background-color: rgb(237,237,237);">Save to my repository</button>
+                                <ul class="dropdown-menu" role="menu" style='display:none'>
+                                    <h6 class="dropdown-header" role="presentation" style="font-size: 12px;">All Repositories</h6><a class="dropdown-item" role="presentation" href="javascript:check_relevance('3')">Task 3</a><a class="dropdown-item" role="presentation" href="javascript:check_relevance('2')">Task 2</a><a class="dropdown-item" role="presentation" href="javascript:check_relevance('1')">Task 1</a>
+                                    </ul>
+               
+
+                        <input type="hidden" id="all_sels" name="all_sels" value="">
+                        <input type="hidden" id="s_focus" name="s_focus" value="">
+                        <input type="hidden" id="a_id" name="a_id" value="{{a_id}}">
+                        <input type="hidden" id="task_id" name="task_id" value=""> 
+                        <input type="hidden" id="annotation_action" name="annotation_action" value="save">
+                        <a href="http://www.google.com" style="display:none" id="annotation_url" name="annotation_url">can't see me</a> 
+                        </form>
+                      </div>
+ 
+                    </div>
+                </div>
+
+                <div>
+                        
+                <ul class="nav nav-pills" style="margin-bottom: 15px;">
+                 <li class="nav-item"> Sorted by   <font color='#055ada'> Relevance </font> </li>
+                        <li class="nav-item"><a class="nav-link" role="tab" data-toggle="pill" href="#tab-7" id='article_show' style="display:none;margin-right: 15px;">Article_loading</a></li>
+
+                  <li class="dropdown" >
+                  <button class="btn btn-primary dropdown-toggle text-primary" data-toggle="dropdown" aria-expanded="false" type="button" name="show_rel_btn" style="display:none;height: 40px;background-color: rgb(237,237,237)">Relevance selection</button>
+
+                  <ul class="dropdown-menu">
+                  <li>
+                   <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name='relevance' value='All' onclick="get_ptype()"> All
+                    </label>
+                    </div>
+                  </li>
+                  <li>
+                  <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name='relevance' value='Relevant' onclick="get_ptype()"> Relevant
+                    </label>
+                  </div>
+                  </li>
+                  <li>
+                  <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name='relevance' value='Irrelevant' onclick="get_ptype()"> Irrelevant
+                    </label>
+                  </div>
+
+                  </li>
+
+ 
+
+               </ul>
+               </li>
+
+                    </ul>
+
+                    <div class="tab-content">
+                        <div class="tab-pane" role="tabpanel" id="tab-7">
+                            <div role="tablist" id="accordion-1">
+                                <div class="card border-white">
+                                     <!-- #data-toggle="collapse"  aria-expanded="tue" aria-controls="accordion-1 .item-1" href="#accordion-1 .item-1" -->
+                                     <div class="card-header" role="tab" style="background-color:#f7f7f7;"> <!--rgb(233,236,239) -->
+                                        <h5 class="mb-0"><a style="font-size: 16px;font-weight: 400;"><!--<i class="fa fa-caret-right" style="font-size: 16px;"></i>&nbsp;-->
+                                    {% if rank|length == 0 %}
+                                    Search Outcome
+                                    {% else %}
+                                    	{% if record_count >=30 %}
+                                    		<span id='search_count' style='background-color:#f7f7f7;'>Top 30 articles from {{record_count}} releated records</span> 
+                                        {% else %}
+                                                <span id='search_count' style='background-color:#f7f7f7;'>Top {{record_count}} articles from this query</span>
+                                        {% endif %}
+                                    {% endif %}
+ 
+</a></h5>
+                                    </div>
+
+                                    <div class="collapse show item-1" role="tabpanel" data-parent="#accordion-1">
+                                        <div class="card-body">
+
+                                            <ul class="list-group" role="tabpanel" data-parent="#breadcrumb-1" style="margin-right: -20px;margin-left: -20px;">
+<script>
+function load_check(limit)
+{
+ if (limit==10){
+  if(load_more_check(limit)){
+   document.getElementById('span2').style.display='block'; 
+   document.getElementById('load_3').style.display='block';
+  }
+ }
+ else if (limit==20){
+   document.getElementById('load_3').style.display='none';
+   document.getElementById('span3').style.display='block';
+ }
+
+}
+
+</script>
+<input type="hidden" id="rank_length" name="rank_length" value="{{rank|length}}">
+
+{%for i in rank%}
+  {% set title=records[i]['title'] %}
+  {% set pub_type=records[i]['p_type'] %}
+  {% set doi=records[i]['doi'] %}
+  {% set score=records[i]['score'] %}
+  {% set meta=records[i]['meta']%}
+  {% set pubmed_id=meta[meta.find('PMID')+5:meta.find('PMID')+14]%}
+  {% set publish_time=meta[meta.find('Publish time:')+14:meta.find('Publish time:')+24]%}
+  
+  {% set abs_content=records[i]['abs'] %} 
+  
+  {% set first_para=records[i]['first_para'] %}
+  {% set citation_count=records[i]['citation_count'] %}
+
+  {% if loop.index==1 %}
+   
+   <div id='span1' style='display:block'>
+  {% elif loop.index==11 %}
+   <a href="javascript:load_check(10)" id='load_2' >Load Articles (11-20)</a>
+   <div id='span2' style='display:none' >
+  {% elif loop.index==21 %} 
+   <a href="javascript:load_check(20)" id='load_3' style='display:none'}>Load Articles (21-30)</a> 
+   <div id='span3' style='display:none' >
+  {% endif %}
+
+  <li class="list-group-item" id="li_{{i}}"  style='display:block' name="record_block">  
+  <h5 style="margin-bottom: 15px;"> 
+  <small class="d-lg-flex justify-content-lg-start" style="color: #999999;"> <span id='pub_type_{{i}}' class='pub_type'> {{ pub_type }} </span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {% if 'PMID' in meta %} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span id='PMID_{{i}}' class='pub_type'> PMID: {{ pubmed_id }} </span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {% endif %} <span id='DOC_{{i}}' class='doc_id'> Document ID: {{ i }}  </span>  </small>
+  <!--<span class='pointer-link'> <i class="fa fa-copy" style="color:blue" id='copy_icon_{{i}}' onClick='javascript:cpTitle(title_span_{{i}}.textContent)'></i></span>--> <span id='title_span_{{i}}' onclick="Javascript:hide_show({{i}})" class="title"> {{ title|safe }} </span>
+  
+
+<button class="btn btn-primary btn-sm border rounded border-light" type="button" style="background-color: #007bff;color: #fffff;margin-right: 0px;margin-left: 20px;padding-top: 2px;padding-bottom: 2px;padding-right: 10px;padding-left: 10px;font-size: 12px;" id="doi_btn_{{i}}" onclick="javascript:window.open('https://doi.org/{{doi}}'); ">Full Text</button>
+
+<button class="btn btn-primary btn-sm border rounded border-light" type="button" style="background-color: gray;color: #ffffff;margin-right: 0px;margin-left: 20px;padding-top: 2px;padding-bottom: 2px;padding-right: 10px;padding-left: 10px;font-size: 12px;" id="citation_btn_{{i}}" onclick="javascript:citation_generation('https://doi.org/{{doi}}'); ">Citation</button> </h6>
+
+  <!-- <small class="d-lg-flex justify-content-lg-start" style="color: #999999;"> Score: {{ score }}</small> -->
+  
+  <small class="d-lg-flex justify-content-lg-start" style="color: #999999;"> <span class='meta_data'>{{ meta |safe }} </span></small>
+  {% if citation_count>0 %}
+   <span id="citation_count_{{i}}_{{citation_count}}" class='meta_citation'> Citation Count: {{ citation_count }} </span><p>
+  {% endif %} 
+  
+
+  <span id="p_date_{{i}}" style='display:none'> {{ publish_time }}</span>
+  <span class='first_para' id='first_para_{{i}}' style='padding-top:10px;padding-bottom:10px;color: black' >{{ first_para|safe }}
+  
+
+  {% if abs_content %}
+  <!-- <i class="fa fa-caret-right" style="font-size: 16px;"></i> -->
+  <a class="SeeMore" href="Javascript:hide_show({{i}})">+ Expand to See More</a><br>
+  {% endif %}
+  </span>
+  <!-- <i class="fa fa-angle-double-down" style="font-size: 16px;color:blue"></i>&nbsp; --> 
+  {% if abs_content %}
+   <span id='{{i}}' style='display:none;margin-top: 20px'><font color='blue'>Abstract:</font><br> <span class='abs_content'>{{ abs_content|safe }}</span> </span><br>
+  {% else %}
+   <span id='{{i}}' style='display:none;margin-top: 20px'><font color='blue'>Abstract: None</font></span>
+  {% endif %}
+ 
+  <div class="row">
+   <div class="col-lg-5">
+    <div class="btn-group btn-group-sm" role="group">
+     {% if i in relevance%}
+       {% set rel=relevance[i]%}
+       {% if rel=='1' %}
+        <button id="btn_r_{{i}}" class="btn btn-light" type="button" onclick='javascript:btn_bg_color(this.id);' style="padding: 3px 12px;background-color: #007bff;color: #ffffff">&nbsp;Interested</button>
+        <!--<button id="btn_ir_{{i}}" class="btn btn-light" type="button" backgroundColor="#ffffff" color="#000000" onclick='javascript:btn_bg_color(this.id);' style="background-color: #C0C0C0;color: #000000;margin-left: 1px;padding: 3px 12px;">&nbsp;Irrelevant</button> -->
+
+       {% else %}
+        <button id="btn_r_{{i}}" class="btn btn-light" type="button" onclick='javascript:btn_bg_color(this.id);' style="background-color: #C0C0C0;color: #000000;padding: 3px 12px;">&nbsp;Interested</button>
+        <!-- <button id="btn_ir_{{i}}" class="btn btn-light" type="button" onclick='javascript:btn_bg_color(this.id);' style="background-color: #007bff;color: #ffffff;margin-left: 1px;padding: 3px 12px;">&nbsp;Irrelevant</button>
+         -->
+       {% endif %}  
+     {%else%}
+       <button id="btn_r_{{i}}" class="btn btn-light" type="button" onclick='javascript:btn_bg_color(this.id);' style="background-color: #c0c0c0;padding: 3px 12px;">&nbsp;Interested</button>
+       <!-- <button id="btn_ir_{{i}}" class="btn btn-light" type="button" onclick='javascript:btn_bg_color(this.id);' style="background-color: #c0c0c0;margin-left: 1px;padding: 3px 12px;">&nbsp;Irrelevant</button>
+       -->  
+     {% endif %}
+     
+       <button id="btn_hide_{{i}}" class="btn btn-light" type="button" onclick="Javascript:hide_show({{i}})" style="display:none;background-color:#ff8c00;margin-left: 1px;padding: 3px 12px;">&nbsp;Hide</button>
+    </div>
+   </div>
+  </div>
+ </li>
+ 
+{% if loop.index==10 %}
+   </div>
+{% elif loop.index==20 %}
+   </div>
+{% elif loop.index==30 %}
+   </div>
+{% endif %}
+
+
+{%endfor%} 
+
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card border-white" style="display: none;">
+                        <div class="card-header" role="tab" style="background-color: rgb(233,236,239);">
+                            <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="false" aria-controls="accordion-1 .item-2" href="#accordion-1 .item-2" style="font-size: 16px;font-weight: 400;"><i class="fa fa-caret-down" style="font-size: 16px;"></i>&nbsp;Backup</a></h5>
+                        </div>
+                        <div class="collapse item-2" role="tabpanel" data-parent="#accordion-1">
+                            <div class="card-body">
+                                <ul class="list-group" role="tabpanel" data-parent="#breadcrumb-1" style="margin-right: -20px;margin-left: -20px;">
+                                    <li class="list-group-item" id="irrelevant">
+                                        <h6 style="margin-bottom: 0px;"><a href="MyRepository-PreviewDocument.html"><span style="text-decoration: underline;">Available for use</span></a><button class="btn btn-primary btn-sm border rounded-0 border-light"
+                                                type="button" style="background-color: #ad00ff;color: #ffffff;margin-right: 0px;margin-left: 20px;padding-top: 2px;padding-bottom: 2px;padding-right: 10px;padding-left: 10px;font-size: 12px;">Article ID</button><br></h6>
+                                        <small class="d-lg-flex justify-content-lg-start" style="color: #999999;">Column 1:</small>
+                                        <small class="d-lg-flex justify-content-lg-start" style="color: #999999;">Column 2:</small>
+                            </div>
+                            </li>
+
+
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+    <div class="tab-pane active" role="tabpanel" id="tab-8">
+        <div role="tablist" id="accordion-2">
+
+    </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <nav class="d-lg-flex justify-content-lg-center" style="padding-top: 10px;">
+                <ul class="pagination" style="display: none;">
+                    <li class="page-item"><a class="page-link" href="#">Top</a></li>
+                    <li class="page-item"><a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">»</span></a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    </div>
+    <div class="col-md-6 col-lg-4"></div>
+    </div>
+    </div>
+    </div>
+    <div class="footer-clean">
+        <footer >
+            <div class="container">
+                <div class="row justify-content-center">
+                
+                    <div class="col-lg-3 item social">
+                        <p><p>
+                    </div>
+    
+                    <div class="col-sm-4 col-md-3 item">
+                        <h3>COVID-19 Resource</h3>
+                        <ul>
+                            <li><a href="https://icite.od.nih.gov/covid19/search/" target="_blank">COVID-19 Protfolio(NIH)</a></li>
+                            <li><a href="https://ir.nist.gov/covidSubmit/" target="_blank">TREC-COVID</a></li>
+                            <li><a href="https://www.semanticscholar.org/cord19" target="_blank">CORD-19 Research Dataset</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-sm-4 col-md-3 item">
+                        <h3>About</h3>
+                        <ul>
+                            <li><a href="https://www.med.uc.edu" target="_blank">College of Medicine,University of Cincinnati</a></li>
+                            <li><a href="https://med.uc.edu/bmi/labs/iCDCU" target="_blank">iCDCU Lab</a></li>
+                            <li><a href="https://www.uchealth.com/" target="_blank">UC Health</a></li>
+                            <li><a href="mailto:wutz@ucmail.uc.edu">Contact Us</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-sm-4 col-md-3 item">
+                        <h3>Publication</h3>
+                        <ul>
+                            <li><a href="https://trec.nist.gov/pubs/trec27/papers/MedIER-PM.pdf">TREC-PM 2018</a></li>
+                            <li><a href="https://trec.nist.gov/pubs/trec28/papers/CincyMedIR.PM.pdf">TREC-PM 2019</a></li>
+
+                        </ul>
+                    </div>
+ 
+                     
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script src="/static/assets/js/jquery.min.js"></script>
+    <script src="/static/assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/static/assets/js/Sidebar-Menu.js"></script>
+     <script src="/static/assets/js/menu.js"></script>
+    <script src="/static/assets/js/function.js"></script>
+
+
+</body>
+
+</html>

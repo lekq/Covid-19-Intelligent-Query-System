@@ -1,0 +1,255 @@
+
+{% macro exportHTML() %}
+    <!-- Edit Project modal -->
+    <div class="modal fade" id="editProjectModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div>
+                    <button type="button" class="close" data-dismiss="modal">
+                        &times;
+                    </button>
+                </div>
+                <div class = "form-group p-2" id = "editProjectForm">
+                    <label for="projectName" style = "font-weight: 900;">Project Name</label>
+                    <input class="form-control" id="projectName" name = "projectName" value = "" placeholder="Project Name">
+
+                    <label for="projectDesc" style = "font-weight: 900;">Project Description</label>
+                    <textarea class="form-control" id="projectDesc" rows = "3" maxlength= "250" name = "projectDesc"></textarea>
+                    <br>
+
+                    <!--Palette to pick color for your project -->
+                    <label for="projectColor" style = "font-weight: 900;">Project Color</label>
+                    <div class = "row">
+                        <div class = "col-md-4 col-12">
+                            <button type="button" class="btn btn-secondary mr-2 mb-2 rounded-1 color-button" style = "background-color: rgb(235, 52, 52); height: 1.67rem" onclick = "changeColor (this)"></button>
+                            <button type="button" class="btn btn-secondary mr-2 mb-2 rounded-1 color-button" style = "background-color: rgb(235, 226, 52); height: 1.67rem" onclick = "changeColor (this)"></button>
+                            <button type="button" class="btn btn-secondary mr-2 mb-2 rounded-1 color-button" style = "background-color: rgb(131, 235, 52); height: 1.67rem" onclick = "changeColor (this)"></button>
+                            <button type="button" class="btn btn-secondary mr-2 mb-2 rounded-1 color-button" style = "background-color: rgb(52, 235, 174); height: 1.67rem" onclick = "changeColor (this)"></button>
+                            <button type="button" class="btn btn-secondary mr-2 mb-2 rounded-1 color-button" style = "background-color: rgb(52, 235, 235); height: 1.67rem" onclick = "changeColor (this)"></button>
+                            <button type="button" class="btn btn-secondary mr-2 mb-2 rounded-1 color-button" style = "background-color: rgb(52, 58, 235); height: 1.67rem" onclick = "changeColor (this)"></button>
+                            <button type="button" class="btn btn-secondary mr-2 mb-2 rounded-1 color-button" style = "background-color: rgb(153, 52, 235); height: 1.67rem" onclick = "changeColor (this)"></button>
+                            <button type="button" class="btn btn-secondary mr-2 mb-2 rounded-1 color-button" style = "background-color: rgb(235, 52, 223); height: 1.67rem" onclick = "changeColor (this)"></button>
+                            <button type="button" class="btn btn-secondary mr-2 mb-2 rounded-1 color-button" style = "background-color: rgb(51, 56, 56); height: 1.67rem" onclick = "changeColor (this)"></button>
+                        </div>
+                        <div class = "col-md-8 col-12" id = "projectColor">
+                            <div class="input-group mb-3">
+                                <input type="text" id = "inputColorText" class="form-control" readonly value = "#343aeb">
+                                <div class="input-group-prepend">
+                                    <button class="btn" id = "chosenColorButton" style = "background-color: #343aeb;" type="button"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+
+                    <label for="teamManagement" style = "font-weight: 900;">Invite memeber to the Team</label>
+                    <div class="input-group mb-3" id = "teamManagement">
+                        <input type="text" class="form-control" id = "inputMember" placeholder="Search username">
+                        <button class="btn btn-primary" type="button" onclick = "addMemberFromInput ()">+</button>
+                       
+                    </div>
+                    <small id = "addMemberMessage" style = "color: red"></small>
+
+                    <ul class = "list-group" style = "border: none" id = "listAddedMember">
+                        <!--How this list looks like will be in addMember() function-->
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="spinner-border text-primary"  style = "display: none;" id = "editProjectModalSpinner" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <button type="button" id = "editProjectModalButton" class="btn btn-primary float-right">Done</button>
+                <p id = "editProjectMessage" style = "display: none;" ></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro exportScript ()%}
+    <script>
+        var global_var = 0
+        function openEditProjectModal (project_info, action) {
+            /*
+                if the user is creating a project, project_info will be null, action = '/create_project'
+                if the user is editing an exisitng project, project_info will be the info of the current project, action = '/edit_project'
+
+            */
+            var project_name = ''
+            var project_desc = ''
+            var project_color = '#343aeb'
+            var project_id = ''
+            $ ("#listAddedMember").empty()
+            if (project_info != null) {
+                project_id = project_info['project_id']
+                project_name = project_info['project_name']
+                project_desc = project_info['project_desc']
+                project_color = project_info['project_color']
+                project_info['role_assignment'].forEach( element => {
+                    addMemberHTML (element['account_id'], element['role_description'])
+                });
+            }
+
+            $ ("#projectName").val (project_name)
+            $ ("#projectDesc").val (project_desc)
+            $ ("#editProjectMessage").text ("")
+            $ ("#addMemberMessage").text ("")
+
+
+            //highlight the chosen color
+            $ (".color-button").each ( function () {
+                if (rgb2Hex ($(this).css ("background-color")) == project_color) {
+                    $ ("#chosenColorButton").css ("background-color", project_color)
+                    $ ("#inputColorText").val (project_color)
+                }
+            })
+            $ ('#editProjectModalButton').unbind ('click') // remove all click function before
+            $ ("#editProjectModalButton").click (function () {
+                $ ("#editProjectModalButton").attr ("disabled", true)
+                $ ("#editProjectModalSpinner").show ()
+                var new_project_name = $ ("#projectName").val()
+                var new_project_desc = $ ("#projectDesc").val()
+                var new_project_color = $ ("#inputColorText").val()
+                var list_added_member = []
+                $ (".member-row").each (function () {
+                    var new_member = $ (this).find ('.added-member-name').text().trim()
+                    var new_role = $ (this).find ('.added-member-role').find (":selected").val()
+                    list_added_member.push ({
+                        'username' : new_member,
+                        'role' : new_role
+                        }
+                    )
+                })
+
+                $.post (action, {
+                    'project_id': project_id,
+                    'project_name': new_project_name,
+                    'project_desc' : new_project_desc,
+                    'project_color' : new_project_color,
+                    'json_project_role_assignment' : JSON.stringify (list_added_member)
+                })
+                .done (function (response) {
+                    $ ("#editProjectModalSpinner").hide ()
+                    if ('success_msg' in response) {
+                        $ ("#editProjectMessage").text ("Successfully create/edit your project. Autofresh will happen in 5 seconds")
+                        $ ("#editProjectMessage").css ("color", "green")
+                        $ ("#editProjectMessage").show()
+                        setTimeout (function () {}, 5000)
+                        location.reload ()
+                    } else {
+                        $ ("#editProjectMessage").text (response['error_msg'])
+                        $ ("#editProjectMessage").show()
+                        $ ("#editProjectMessage").css ("color", "red")
+                        $ ("#editProjectModalButton").attr ("disabled", false)
+                    }
+                })
+                .fail (function (response) {
+                    $ ("#editProjectModalSpinner").hide ()
+                    $ ("#editProjectMessage").text ('Could not send your request')
+                    $ ("#editProjectMessage").show()
+                    $ ("#editProjectMessage").css ("color", "red")
+                    $ ("#editProjectModalButton").attr ("disabled", false)
+                })
+                
+            })
+            $ ("#editProjectModal").modal ("show")
+        }
+
+        function changeColor (ele) {
+            var new_color = $ (ele).css ("background-color")
+            rgb = new_color.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(,\s*\d+\.*\d+)?\)$/);
+            r_value = parseInt (rgb[1])
+            g_value = parseInt (rgb[2])
+            b_value = parseInt (rgb[3])
+            var inverted_color = "rgb(" + (255 - r_value) + ", " + (255 - g_value) + ", " + (255 - b_value) + ")"
+
+
+
+            var hex_new_color = rgb2Hex (new_color)
+            var hex_inverted_color = rgb2Hex (inverted_color)
+            $ ("#chosenColorButton").css ("background-color", hex_new_color)
+            $ ("#inputColorText").val (hex_new_color)
+            
+        }
+
+        function hex(x) {
+            return ("0" + parseInt(x).toString(16)).slice(-2);
+        }
+        function rgb2Hex(rgb) {
+            rgb = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(,\s*\d+\.*\d+)?\)$/);
+            return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+        }
+        
+        function addMemberFromInput () {
+            $ ("#addMemberMessage").text ("")
+            var new_member = $ ("#inputMember").val().trim()
+            if (new_member.length == 0) {
+                $ ("#addMemberMessage").text ("Empty username")
+                return false
+            }
+            var okay = true
+            $(".added-member-name").each (function () {
+                //alert ($ (this).text())
+                var existingMember = $(this).text().trim()
+                
+                if (new_member == existingMember) {
+                    $ ("#addMemberMessage").text ("Already existed member")
+                    okay = false
+                }
+            })
+            if (!okay) {
+                return false
+            }
+
+            // check if that is a valid account
+            // will be added later
+            addMemberHTML (new_member, 'contributor') 
+        }
+
+        function addMemberHTML (new_member, role) {
+
+            var admin_selected = ''
+            var contributor_selected = ''
+            if (role == 'admin') {
+                admin_selected = 'selected'
+            } else if (role == 'contributor') {
+                contributor_selected = 'selected'
+            }
+
+            var addedHTML = `
+            <li class="list-group-item d-flex justify-content-between align-items-center member-row">
+                <div class = "row w-100">
+                    <div class = "col-6 added-member-name">
+                        ` + new_member +` 
+                    </div>
+
+                    <div class = "col-4 p-0">
+                        <select class="form-select added-member-role" aria-label="Default select example">
+                            <option value="admin" ` + admin_selected + `> Admin </option>
+                            <option value="contributor" ` + contributor_selected + `> Contributor </option>
+                        </select>
+                    </div>
+
+                    <div class = "col-2 p-0">
+                        <i class="bi-dash-circle-fill float-right remove-icon" style="font-size: 1rem; color: rgb(235, 52, 52);" onclick = "removeFromList (this)"></i>
+                    </div>
+                </div>
+            </li>`
+
+            $ ("#listAddedMember").append (addedHTML)
+            $ ("#inputMember").val ("")
+
+        }
+        
+        function removeFromList (element) {
+            ($(element).closest ('li')).remove(); // remove the <li> that contain this element
+        }
+
+    </script>
+
+{% endmacro %}
+
+{% macro exportStyle () %}
+{% endmacro%}

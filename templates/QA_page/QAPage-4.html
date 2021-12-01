@@ -1,0 +1,26 @@
+{% extends "./RootTemplateWithHeaderFooter.html" %}
+
+{% block main_content %}
+    <div style="margin-bottom: 100px;margin-top: 100px;">
+        <div class="container" style="width: 60%;">
+            <ol class="breadcrumb border rounded-0 border-white" style="background: rgb(247,247,247);">
+                <li class="breadcrumb-item"><a href="/QA_page/start"><span style="color: rgb(0, 123, 255);">Home</span></a></li>
+                <li class="breadcrumb-item active"><span>Algorithm Mechanisms&nbsp;</span></li>
+            </ol>
+            <ul class="list-group border rounded-0 border-white" role="tabpanel" data-parent="#breadcrumb-1">
+                <li class="list-group-item" id="irrelevant">
+                    <p style="font-size: 18px;font-weight: bold;margin-bottom: 10px;margin-top: 5px;color: #212529;">How Does IQS Decide Relevant Articles?</p>
+                    <p style="margin-bottom: 15px;font-size: 14px;margin-top: 10px;">The IQS uses&nbsp;<span style="text-decoration: underline;">Elasticsearch</span>&nbsp;as the main tool to search for top relevant documents that match&nbsp;the same keywords as you input,&nbsp;similar to&nbsp;a Google search.&nbsp;The&nbsp;IQS also uses another tool called&nbsp;<span style="text-decoration: underline;">Metamaplite</span>&nbsp;to extract medical concepts from a text. Querying using&nbsp;these&nbsp;concepts can catch articles&nbsp;that are&nbsp;related&nbsp;to the search terms and allow for inspiration.&nbsp;</p>
+                </li>
+                <li class="list-group-item" id="irrelevant-2">
+                    <p style="font-size: 18px;font-weight: bold;margin-bottom: 10px;margin-top: 5px;color: #212529;">How&nbsp;are the&nbsp;Key Sentences Extracted?&nbsp;</p>
+                    <p style="margin-bottom: 15px;font-size: 14px;margin-top: 10px;">We use Spacy&nbsp;<span style="text-decoration: underline;">TextRank</span>&nbsp;(<a href="https://nam11.safelinks.protection.outlook.com/?url=https%3A%2F%2Fderwen.ai%2Fdocs%2Fptr%2F&amp;data=04%7C01%7Czhoufy%40mail.uc.edu%7Cdd7bd2889dfe4deabdc908d9415a2576%7Cf5222e6c5fc648eb8f0373db18203b63%7C1%7C0%7C637612677688242010%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C1000&amp;sdata=f7BVE3G1BO%2BMNOo%2FzwXei5ySf6PuCMdTzE963p33rGs%3D&amp;reserved=0" target="_blank"><span style="text-decoration: underline;">https://derwen.ai/docs/ptr/</span></a>)&nbsp;to&nbsp;generate key sentences.&nbsp;The&nbsp;<span style="text-decoration: underline;">TextRank</span>&nbsp;can rank the relevance of each sentence.&nbsp;We parse the abstract of&nbsp;a document through the&nbsp;<span style="text-decoration: underline;">TextRank</span>&nbsp;pipeline,&nbsp;and&nbsp;the&nbsp;top&nbsp;two or three&nbsp;relevant sentences&nbsp;in an article’s&nbsp;abstract will be highlighted&nbsp;to&nbsp;indicate a brief&nbsp;summary&nbsp;of&nbsp;this&nbsp;abstract/document.&nbsp;The highlighted&nbsp;sentence&nbsp;you can see before clicking the ‘expand to see’&nbsp;in the search results&nbsp;is the top relevant sentence&nbsp;taken from&nbsp;<span style="text-decoration: underline;">TextRank</span>.</p>
+                </li>
+                <li class="list-group-item" id="irrelevant-1">
+                    <p style="font-size: 18px;font-weight: bold;margin-bottom: 10px;margin-top: 5px;color: #212529;">What Does a 'Key Sentence'&nbsp;Mean?</p>
+                    <p style="margin-bottom: 15px;font-size: 14px;margin-top: 10px;">A key sentence is an important sentence of the abstract of a document.&nbsp;Two&nbsp;or&nbsp;three&nbsp;key sentences are used to summarize the long abstract,&nbsp;making it&nbsp;more convenient&nbsp;to figure out the main idea of an article&nbsp;with a&nbsp;quick glance. To see the full abstract, click '<span style="text-decoration: underline;">Expand to See</span>’ to view&nbsp;it within the&nbsp;IQS, or you&nbsp;may&nbsp;click ‘<span style="text-decoration: underline;">Full Text</span>’ to view&nbsp;the abstract in a full article outside&nbsp;of&nbsp;the IQS.</p>
+                </li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}

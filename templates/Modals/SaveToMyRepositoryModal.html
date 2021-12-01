@@ -1,0 +1,110 @@
+{% macro exportHTML (all_project_info) %}
+    <div class="modal fade" id="saveToRepositoryModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div>
+                        <button type="button" class="close" data-dismiss="modal">
+                            &times;
+                        </button>
+                    </div>
+                    <div class = "form-group p-2" id = "saveToRepositoryForm">
+                        <h6 style = "font-weight: 900;">Project</h6>
+                        <select class="form-select form-select-lg w-100" id = "projectOption" onchange = "showRepositoryOption ()">
+                            <option> Please select one project</option>
+                            {% for project in all_project_info %}
+                                {% set list_repository_id = 'repositoryList-' + project['project_id'] | string %}
+                                <option value = "{{project['project_id']}}"> {{project['project_name']}} (created by {{project['account_id']}})</option>
+                            {% endfor %}
+                        </select>
+                        <br>
+                        <h6 style = "font-weight: 900;">Repository</h6>
+                        {% for project in all_project_info %}
+                            {% set list_repository_id = 'repositoryList-' + project['project_id'] | string %}
+                            <div class = "repository-list" id = "{{list_repository_id}}" style = "display: none;">
+                                {% for repo in project['repository_list'].values() %}
+                                    {% set toggle_repository_id = 'repositoryToggle-' + repo['repo_id'] | string %}
+                                    <div class = "row">
+                                        <div class = "col-9">
+                                            <p>{{repo['repo_name']}}</p>
+                                        </div>
+                                        <div class="col-3 p-0">
+                                            <input class = "repository-toggle-button" id = "{{toggle_repository_id}}" type="checkbox" data-size = "xs" data-toggle="toggle" data-on = " " data-off = " " data-offstyle = "secondary"> 
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <div class = "form-group">
+                        <button class = "btn btn-primary btn-lg float-right" onclick = "location.reload()" class="close" data-dismiss="modal">
+                            Done
+                        </button>
+                    </div>
+                    <p id = "saveToRepositoryMessage" style = "display: none;" ></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endmacro %}
+
+{% macro exportScript () %}
+    <script>
+        function openSaveToRepositoryModal (all_project_info, article_id) {
+            $ (".repository-toggle-button").bootstrapToggle ('off')
+            $ ("#saveToRepositoryMessage").text ("")
+            all_project_info.forEach (project => {
+                for (const [repo_id, repo] of Object.entries (project['repository_list'])) {
+                    if (article_id in repo['list_articles']) {
+                        $ ("#repositoryToggle-" + repo_id.toString ()).bootstrapToggle ('on')
+                    }
+                    $ ("#repositoryToggle-" + repo_id.toString()).on ('change', function () {
+                        var is_saving = $ (this).is(":checked")
+                        if (is_saving) {
+                            $.post ('/save_article', {
+                                'repo_id' : repo_id,
+                                'article_id': article_id
+                            })
+                            .done (function (response) {
+                                if (!('success_msg' in response)) {
+                                    $ (this).bootstrapToggle ()
+                                }
+                            })
+
+                        } else {
+                            $.post ('/delete_article', {
+                                'repo_id' : repo_id,
+                                'article_id': article_id
+                            })
+                            .done (function (response) {
+                                if (!('success_msg' in response)) {
+                                    $ (this).bootstrapToggle ()
+                                }
+                            })
+                            .fail (function () {
+                                $ (this).bootstrapToggle ()
+
+                            })
+                        }
+                    })
+                }
+
+            })
+            $ ('#saveToRepositoryModal').modal ('show')
+            
+        }
+        
+        function showRepositoryOption () {
+            var chosen_project_id = $ ("#projectOption").val ()
+            var list_repository_id = '#repositoryList-' + chosen_project_id.toString()
+            $ ('.repository-list').hide ()
+            $ (list_repository_id).show ()
+        }
+    </script>
+
+{% endmacro %}
+

@@ -1,0 +1,308 @@
+{% extends "./RootTemplateWithHeaderFooter.html" %}
+{% import "./Modals/EditProjectModal.html" as editProjectModal%}
+{% import "./Modals/ActionConfirmationModal.html" as confirmActionModal%}
+{% import "./Modals/DeleteProjectModal.html" as deleteProjectModal%}
+{% import "./Modals/EditRepositoryModal.html" as editRepositoryModal%}
+
+
+{% block main_content%}
+    <div class = "container-fluid" style = "background-color: #e9ecef">
+        <div class = "container mt-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/manage_projects"><span>index</span></a></li>
+                <li class="breadcrumb-item"><a href="/manage_projects/all_projects"><span>All Projects</span></a></li>
+            </ol>
+        </div>
+    </div>
+    {% set active_created_project = project_list['created_project']['active_project'] %}
+    {% set archived_created_project = project_list['created_project']['archived_project'] %}
+    {% set active_admin_project = project_list['admin_project']['active_project'] %}
+    {% set archived_admin_project = project_list['admin_project']['archived_project'] %}
+    {% set active_contributor_project = project_list['contributor_project']['active_project'] %}
+    {% set archived_contributor_project = project_list['contributor_project']['archived_project'] %}
+
+    <div class = "container pt-5 pb-5">
+        <div class = "col-md-12 col-lg-10 pb-5">
+            <div class="dropdown ">
+                <button class="btn btn-light float-right" style = "background-color: white;" type="button" id="filterButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Filter
+                    <i class="bi-funnel" style="font-size: 1.5rem; color: cornflowerblue;"></i>
+                </button>
+                <div class="dropdown-menu p-3" aria-labelledby="filterButton">
+                    <form id = "filterForm" oninput = "updateProjectTable()">
+                        <!--Filter by Project stauts-->
+                        <h6 style = "font-weight: 900;">Project Status: </h6>
+                        <div class="form-check">
+                            <input class = "form-check-input filter-option" type = "checkbox" value = "active" id="activeProjectOption" checked>
+                            <label class = "form-check-label" for = "activeProjectOption">
+                                Active Project
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class = "form-check-input filter-option" type = "checkbox" value = "archived" id = "archivedProjectOption" checked>
+                            <label class = "form-check-label filter-option" for = "archivedProjectOption">
+                                Archived Project
+                            </label>
+                        </div>
+                        
+                        <!--Filter by Project role-->
+                        <h6 style = "font-weight: 900;">Project Role: </h6>
+                        <div class = "form-check">
+                            <input class = "form-check-input filter-option" type = "checkbox" value = "creator" id="creatorProjectOption" checked>
+                            <label class = "form-check-label" for = "creatorProjectOption">
+                                Creator
+                            </label>
+                        </div>
+                        <div class = "form-check">
+                            <input class = "form-check-input filter-option" type = "checkbox" value = "admin" id = "adminProjectOption" checked>
+                            <label class="form-check-label" for="adminProjectOption">
+                                Admin
+                            </label>
+                        </div>
+                        <div class = "form-check">
+                            <input class = "form-check-input filter-option" type = "checkbox" value = "contributor" id = "contributorProjectOption" checked>
+                            <label class="form-check-label" for="contributorProjectOption">
+                                Contributor
+                            </label>
+                        </div>
+
+                        <!--Filter by Project name-->
+                        <h6 style = "font-weight: 900;">Project Name </h6>
+                        <input type="text" class="form-control" id = "projectNameFilter">
+
+                        <!--Filter by Creator name-->
+                        <h6 style = "font-weight: 900;">Creator Name </h6>
+                        <input type="text" class="form-control" id = "creatorNameFilter">
+
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <h3 style = "font-weight: 900;">Active Project</h3>
+        <div class="table-responsive-md">
+            <table class="table col-md-12 col-lg-10">
+                <thead style = "background-color: rgb(143, 135, 135);">
+                    <tr class="titlerow" style="color: rgb(255,255,255);">
+                        <th class = "col-4">Project Name</th>
+                        <th class = "col-2">Date Created</th>
+                        <th class = "col-1">Creator</th>
+                        <th class = "col-2">Latest Editor</th>
+                        <th class = "col-2">Your role</th>
+                        <th class = "col-1"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for project in active_created_project + active_admin_project + active_contributor_project %}
+                        {% set operation_button_id = "projectOperationButton-" + project['project_id'] | string %}
+                        <tr class = "active-project-row">
+                            <td class = "project-name" style = "font-weight: 900;">{{project['project_name']}}</td>
+                            <td>{{project['created_timestamp']}}</td>
+                            <td class = "project-creator">{{project['account_id']}}</td>
+                            <td>N/A</td>
+                            <td class = "project-role" >{{project['role_description']}}</td>
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" style = "background-color: rgb(255, 255, 255); color:rgb(0, 0, 0);" type="button" id="{{operation_button_id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="{{operation_button_id}}">
+                                        <a class="dropdown-item" href="/manage_projects/all_projects/{{project['project_id']}}">View Project</a>
+                                        {% if project['role_description'] == 'admin' or project['role_description'] == 'creator' %}
+                                            <a class="dropdown-item" onclick = "openEditRepositoryModal ({{project}}, null, '/create_repository')">Add a New Repository</a>
+                                        {% endif %}
+                                        {% if project['role_description'] == 'creator' %}
+                                            <a class="dropdown-item" onclick = "archiveProject ({{project['project_id']}})">Archive (Hide) </a>
+                                            <a class="dropdown-item" onclick = "openEditProjectModal ({{project}}, '/edit_project')">Edit Project </a>
+                                            <a class="dropdown-item" onclick = "openDeleteProjectModal({{project}})">Delete </a>
+                                        {% else %}
+                                            <a class="dropdown-item" style = "color: red" onclick = "leaveProject ({{project}})">Leave Project</a>
+                                        {% endif %}
+                                        
+                                    </div>
+                                </div>
+                            </td>
+
+                            
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <h3 style = "font-weight: 900;">Archived Project</h3>
+        <div class="table-responsive-md">
+            <table class="table col-md-12 col-lg-10">
+                <thead style = "background-color: rgb(143, 135, 135);">
+                    <tr class="titlerow" style="color: rgb(255,255,255);">
+                        <th class = "col-4">Project Name</th>
+                        <th class = "col-2">Date Created</th>
+                        <th class = "col-1">Creator</th>
+                        <th class = "col-2">Latest Editor</th>
+                        <th class = "col-2">Your role</th>
+                        <th class = "col-1"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for project in archived_created_project + archived_admin_project + archived_contributor_project %}
+                        <tr class = "archived-project-row">
+                            <td class = "project-name" style = "font-weight: 900;">{{project['project_name']}}</td>
+                            <td>{{project['created_timestamp']}}</td>
+                            <td class = "project-creator" >{{project['account_id']}}</td>
+                            <td>N/A</td>
+                            <td class = "project-role">{{project['role_description']}}</td>
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" style = "background-color: rgb(255, 255, 255); color:rgb(0, 0, 0);" type="button" id="{{operation_button_id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="{{operation_button_id}}">
+                                        <a class="dropdown-item" href="/manage_projects/all_projects/{{project['project_id']}}">View Project</a>
+                                        {% if project['role_description'] == 'creator' %}
+                                            <a class="dropdown-item" onclick = "unarchiveProject ({{project['project_id']}})">Unarchive</a>
+                                        {% endif %}
+                                        
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {{editProjectModal.exportHTML ()}}
+    {{editRepositoryModal.exportHTML ()}}
+    {{confirmActionModal.exportHTML ()}}
+{% endblock %}
+
+{% block additional_style%}
+    {{super ()}}
+    <style>
+        .table thead th {
+            vertical-align: middle;
+        }
+    </style>
+{% endblock %}
+
+{% block additional_script %}
+    {{super ()}}
+    {{editProjectModal.exportScript ()}}
+    {{editRepositoryModal.exportScript() }}
+    {{confirmActionModal.exportScript ()}}
+    {{deleteProjectModal.exportScript ("/manage_projects/all_projects")}}
+    <script>
+        function updateProjectTable () {
+
+            // collect all filter option
+            var show_project_status = []
+            var show_project_role = []
+            var project_name_filter = $ ('#projectNameFilter').val ().toLocaleLowerCase ()
+            var creator_name_filter = $ ('#creatorNameFilter').val ().toLocaleLowerCase ()
+            $ (".filter-option").filter (":checked").each (function () {
+                var value = $ (this).val()
+                if (value == 'active' || value == 'archived') {
+                    show_project_status.push (value)
+                } else if (value == 'creator' || value == 'admin' || value == 'contributor') {
+                    show_project_role.push (value)
+                }
+            })
+
+            // start filtering
+            $ (".active-project-row, .archived-project-row").each (function () {
+                var show = true
+                var project_status = ''
+                var project_role = ''
+                var project_name = ''
+                var project_creator = ''
+                if ($ (this).attr ('class') == 'active-project-row') {
+                    project_status = 'active'
+                } else {
+                    project_status = 'archived'
+                }
+
+                project_role = $ (this).find ('.project-role:first').text ()
+                project_name = $ (this).find ('.project-name:first').text ().toLocaleLowerCase ()
+                project_creator = $ (this).find ('.project-creator:first').text (). toLocaleLowerCase ()
+                if (!show_project_status.includes (project_status) || !show_project_role.includes (project_role)) {
+                    show = false
+                }
+                if (project_name_filter.length > 0 && !project_name.includes (project_name_filter)) {
+                    show = false
+                }
+                if (creator_name_filter.length > 0 && !project_creator.includes (creator_name_filter)) {
+                    show = false
+                }
+                if (show) {
+                    $ (this).show ()
+                } else {
+                    $ (this).hide ()
+                }
+
+            })
+
+        }
+
+        function archiveProject (project_id) {
+            $.post ('/set_archive_status', {
+                    'project_id' : project_id,
+                    'new_archive_status': 1
+                }
+            )
+            .done (function () {
+                location.reload()
+            })
+            .fail (function () {
+                alert ("Fail to archive your project. Please try again later")
+            })
+
+        }
+
+        function unarchiveProject (project_id) {
+            $.post ('/set_archive_status', {
+                    'project_id' : project_id,
+                    'new_archive_status' : 0
+                }
+            )
+            .done (function () {
+                location.reload()
+            })
+            .fail (function () {
+                alert ("Fail to unarchive your project. Please try again later")
+            })
+        }
+
+        function leaveProject (project) {
+            var action_title = 'Do you want to leave ' + project['project_name'] + '?'
+            var action_description = 'Leaving a project will prevent you from seeing it again but will not remove your added/created articles and repositories'
+            var yes_action = function () {
+                $ ('#confirmActionButton').attr ('disabled', true)
+                $ ('#confirmActionModalSpinner').show ()
+                $.post ( '/leave_project', {
+                    'project_id' : project['project_id']
+                })
+                .done (function (response) {
+                    $ ('#confirmActionModalSpinner').hide ()
+                    if ('success_msg' in response) {
+                        $("#confirmActionModalMessage").text ("Successfully execute your action. Autofresh will happen in 5 seconds")
+                        $("#confirmActionModalMessage").css ("color", "green")
+                        $("#confirmActionModalMessage").show()
+                        setTimeout (function () {}, 5000)
+                        window.location = "/manage_projects"
+                    } else {
+                        $ ('#confirmActionButton').attr ('disabled', false)
+                    }
+
+                })
+                .fail (function () {
+                    $ ('#confirmActionModalSpinner').hide ()
+                    $ ('#confirmActionButton').attr ('disabled', false)
+                    $ ("#confirmActionModalMessage").text ("Fail to send your request. Please check your internet connection and try again")
+                    $ ("#confirmActionModalMessage").css ("color", "red")
+                    $ ("#confirmActionModalMessage").show()
+
+                })
+            }
+            openAskForConfirmationModal (action_title, action_description, yes_action)
+        }
+    </script>
+{% endblock %}
+

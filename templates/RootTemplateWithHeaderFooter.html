@@ -1,0 +1,267 @@
+{% extends "./RootTemplate.html" %}
+
+
+{% block body %} 
+    <!--header of our website -->
+    
+
+    <nav class="yamm navbar navbar-expand-lg navbar-light" style = "background-color: white;">
+        <div class = "container px-3">
+            <a href="/home" target="_blank"><img src="/static/assets/img/IQS_logo.png" width="auto" height="auto"></a>
+            <button class="navbar-toggler" type = "button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarText">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active mr-3">
+                        <a class="nav-link" style = "font-size: 1rem" href="/QA_page/start">Learn IQS</a>
+                    </li>
+                    <li class="nav-item active mr-3">
+                        <a class="nav-link" style = "font-size: 1rem" href="/manage_projects">My Projects</a>
+                    </li>
+                </ul>
+                {% if account_id is not none and account_id|length > 0 %}
+                    <!--This is block for account_indication, notification and logout button, which should only be available if the user had already logged in-->
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item active mr-3">
+                            <button class = "btn">
+                                <span><i class="bi-person-circle m-0 p-0" style="font-size: 1.5 rem; color: grey;"></i></span>
+                                <span>{{account_id}}</span>
+                            </button>
+                        </li>
+                        <li class="nav-item dropdown active align-middle mr-3" id = "notificationDropdown">
+
+                            <button class = "btn" data-toggle = "dropdown" id = "notificationButton" >
+                                <i class="bi-bell-fill m-0" id = "notificationIcon" style="font-size: auto; color: grey;"></i>
+                                {% set num_unread_noti = list_notification|selectattr ('is_read', 'equalto', 0)|list|length %}
+                                {% if num_unread_noti > 0 %}
+                                    <span class="badge badge-pill badge-danger m-0" id = "unreadIndication">{{num_unread_noti}}</span>
+                                {% else %}
+                                <span class="badge badge-pill badge-danger m-0" id = "unreadIndication" style = "visibility: hidden;">{{num_unread_noti}}</span>
+                                {% endif %}
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="notificationButton" style = "min-width: 50%; overflow-y:scroll; max-height:80vh" >
+                                <h2 class = "py-2" style = "font-weight: 900;" >Notifications</h2>
+                                {% for notification in list_notification %}
+                                    <div class = "yamm-content notification-pannel border" onclick = "updateNotificationStatus ({{notification['notification_id']}}, 1); window.location.href = '{{notification['associated_url']}}'">
+                                        <div class = "row">
+                                            <div class = "col-1 is-read-indication" isread = '{{notification["is_read"]}}' style = "vertical-align: middle;">
+                                                {% if not notification['is_read'] %}
+                                                    <i class="bi-dot unread-icon m-0 float-right" style="font-size: 2rem; color: red;"></i>
+                                                {% else %}
+                                                    <i class="bi-dot m-0 unread-icon float-right" style="font-size: 2rem; color: red; display: none"></i>
+                                                {% endif %}
+                                            </div>
+                                            <div class = "col-9" style = "vertical-align: middle; font-size: 1.3rem;">
+                                                <p>{{notification['notification_message'] | safe}}</p>
+                                                <small style = "color: rgb(132, 132, 132)"> {{notification['timestamp_expression']}}</small>
+                                            </div>
+                                            <div class = "col-1 dropdown notification-option" style = "vertical-align: middle;">
+                                                {% set notification_option_id = 'notificationOption-' + notification['notification_id'] | string %}
+                                                <button class = "btn notification-option-button" data-toggle = "dropdown" id = "{{notification_option_id }}">
+                                                    <i class="bi-three-dots-vertical m-0" id = "notificationIcon" style="font-size: auto; color: grey;"></i>
+                                                </button>
+                                                <div class = "dropdown-menu notification-dropdown-menu" style = "position: fixed;" aria-labelledby = "{{notification_option_id }}">
+                                                    <a class = "dropdown-item mark-option" onclick = "toggleNotification ({{notification['notification_id']}})">
+                                                        {% if notification['is_read'] %}
+                                                            Mark as unread
+                                                        {% else %}
+                                                            Mark as read
+                                                        {% endif %}
+                                                    </a>
+                                                    <a style  = "color: red" class = "dropdown-item" onclick = "deleteNotification ({{notification['notification_id']}})">Remove notification</a>
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>    
+                                {% endfor %}
+                            </div>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link btn btn-primary" style = "font-size: 1rem; color: white" href="/logout">Logout</a>
+                        </li>
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    
+    <!--
+    <nav class="navbar navbar-light navbar-expand-md navigation-clean-button" style="height: 60px;">
+        <div class="container">
+            <a href="/home" target="_blank"><img src="/static/assets/img/IQS_logo.png" width="auto" height="auto"></a>
+            <span class = "float-left">
+                <a class="btn btn-link border rounded action-button" role="button" style = "background-color: white; color: black; border-style: none; border: none" href="/static/QA_page/Q&A.html" style="margin-right: 10px">Learn IQS</a> 
+                <a class="btn btn-link border rounded action-button" role="button" style = "background-color: white; color: black; border-style: none; border: none" href="/manage_projects" style="margin-right: 10px">My Projects</a>   
+                <a class="btn btn-link border rounded action-button" role="button" style = "background-color: white; color: black; border-style: none; border: none" href="/logout">Logout</a>
+            </span>
+        </div>
+    </nav>
+    -->
+    {% block main_content %}
+    {% endblock %}
+
+    {% block modal_content %}
+    {% endblock %}
+
+    <div class="footer-clean">
+        <footer >
+            <div class="container">
+                <div class="row justify-content-center">
+    
+                    <div class="col-sm-4 col-md-3 item">
+                        <h3>COVID-19 Resource</h3>
+                        <ul>
+                            <li><a href="https://icite.od.nih.gov/covid19/search/" target="_blank">COVID-19 Protfolio(NIH)</a></li>
+                            <li><a href="https://ir.nist.gov/covidSubmit/" target="_blank">TREC-COVID</a></li>
+                            <li><a href="https://www.semanticscholar.org/cord19" target="_blank">CORD-19 Research Dataset</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-sm-4 col-md-3 item">
+                        <h3>About</h3>
+                        <ul>
+                            <li><a href="https://www.med.uc.edu" target="_blank">College of Medicine,University of Cincinnati</a></li>
+                            <li><a href="https://med.uc.edu/bmi/labs/iCDCU" target="_blank">iCDCU Lab</a></li>
+                            <li><a href="https://www.uchealth.com/" target="_blank">UC Health</a></li>
+                            <li><a href="mailto:wutz@ucmail.uc.edu">Contact Us</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-sm-4 col-md-3 item">
+                        <h3>Publication</h3>
+                        <ul>
+                            <li><a href="https://trec.nist.gov/pubs/trec27/papers/MedIER-PM.pdf">TREC-PM 2018</a></li>
+                            <li><a href="https://trec.nist.gov/pubs/trec28/papers/CincyMedIR.PM.pdf">TREC-PM 2019</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+{% endblock %}
+
+
+{% block additional_script %}
+    <script>
+        $ (document).ready (function () {
+            initializeNotificationButton ()
+            initializeNotificationOptionButton ()
+        })
+
+        function initializeNotificationButton () {
+            // the button with bell icon
+            $ ('#notificationDropdown').on('show.bs.dropdown', function () {
+                $ ('#notificationIcon').css ('color', 'blue')
+            })
+            $ ('#notificationDropdown').on('hide.bs.dropdown', function () {
+                $ ('#notificationIcon').css ('color', 'grey')
+                $ ('.notification-dropdown-menu').hide ()
+
+            })
+        }
+        function initializeNotificationOptionButton () {
+            $ ('.notification-dropdown-menu').click (function (event) {
+                event.stopPropagation ()
+                $ (this).hide ()
+            })
+
+            // the button with three-dot icon
+            $ ('.notification-option-button').click (function (event) {
+                event.stopPropagation ()
+
+                
+                var respective_dropdown = $ (this).closest ('.notification-option').find ('.notification-dropdown-menu')
+                var pos_left = $ (this).offset ().left
+                var pos_top = $ (this).offset ().top
+
+                respective_dropdown.css ('top', pos_top + 30) 
+                respective_dropdown.css ('left', pos_left - 200 )
+                var is_open = respective_dropdown.is (':visible')
+                $ ('.notification-dropdown-menu').hide ()
+                if (is_open) {
+                    respective_dropdown.hide ()
+                } else {
+                    respective_dropdown.show ()
+                    
+                }   
+            })
+           
+        }
+        function toggleNotification (notification_id) {
+            var id = '#notificationOption-' + notification_id 
+            var chosen_notification_panel = $ (id).closest ('.notification-pannel')
+            var current_stauts = parseInt (chosen_notification_panel.find ('.is-read-indication').attr ('isread'))
+            var new_status = 0
+            if (current_stauts == 0) {
+                new_status = 1
+            } else {
+                new_status = 0
+            }
+            updateNotificationStatus (notification_id, new_status)
+
+        }
+
+        function updateNotificationStatus (notification_id, new_read_status) {
+            var id = '#notificationOption-' + notification_id 
+            var chosen_notification_panel = $ (id).closest ('.notification-pannel')
+            $.post ( '/set_notification_status', {
+                'notification_id' : notification_id,
+                'new_status' : new_read_status
+            })
+            .done (function (response) {
+
+                if ('success_msg' in response) {
+                    chosen_notification_panel.find ('.is-read-indication').attr ('isread', new_read_status)
+                    if (new_read_status == 1) {
+                        chosen_notification_panel.find ('.is-read-indication').find ('.unread-icon').hide ()
+                        chosen_notification_panel.find ('.mark-option').text ('Mark as unread');
+                    } else {
+                        chosen_notification_panel.find ('.is-read-indication').find ('.unread-icon').show ()
+                        chosen_notification_panel.find ('.mark-option').text ('Mark as read');
+                    }
+                    updateNumUnreadNotification ()
+                }
+
+            })
+        }
+
+        function deleteNotification (notification_id) {
+            var id = '#notificationOption-' + notification_id 
+            var chosen_notification_panel = $ (id).closest ('.notification-pannel')
+            $.post ('/delete_notification', {
+                'notification_id' : notification_id
+
+            })
+            .done (function (response) {
+                if ('success_msg' in response) {
+                    chosen_notification_panel.remove ()
+                }
+                updateNumUnreadNotification ()
+            })
+
+        }
+
+        function updateNumUnreadNotification (new_number) {
+            var num_unread = $ ('.unread-icon:visible').length
+            $ ('#unreadIndication').text (num_unread)
+            if (num_unread == 0) {
+                $ ('#unreadIndication').css ('visibility', 'hidden')
+            } else {
+                $ ('#unreadIndication').css ('visibility', 'visible')
+            }
+        }
+
+    </script>
+{% endblock %}
+
+
+
+{% block additional_style %}
+    <style>
+        .notification-pannel:hover {
+            cursor: pointer;
+            background-color: rgb(199, 199, 199);
+        }
+    </style>
+
+{% endblock %}

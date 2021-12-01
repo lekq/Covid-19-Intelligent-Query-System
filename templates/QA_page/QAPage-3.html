@@ -1,0 +1,34 @@
+{% extends "./RootTemplateWithHeaderFooter.html" %}
+
+{% block main_content %}
+    <div style="margin-bottom: 100px;margin-top: 100px;">
+        <div class="container" style="width: 60%;">
+            <ol class="breadcrumb border rounded-0 border-white" style="background: rgb(247,247,247);">
+                <li class="breadcrumb-item"><a href="/QA_page/start"><span style="color: rgb(0, 123, 255);">Home</span></a></li>
+                <li class="breadcrumb-item active"><span>Expected Working Outcomes</span></li>
+            </ol>
+            <ul class="list-group border rounded-0 border-white" role="tabpanel" data-parent="#breadcrumb-1">
+                <li class="list-group-item" id="irrelevant">
+                    <p style="font-size: 18px;font-weight: bold;margin-bottom: 10px;margin-top: 5px;color: #212529;">A Supplementary Tool to PubMed</p>
+                    <p style="margin-bottom: 15px;font-size: 14px;margin-top: 10px;">The IQS provides you functions PubMed doesn't provide, allowing you to&nbsp;search related literature by articles, dig into&nbsp;the related articles with your collaborators (coming soon), and find research inspirations&nbsp;using the unique query mode functions available.</p>
+                </li>
+                <li class="list-group-item" id="irrelevant-2">
+                    <p style="font-size: 18px;font-weight: bold;margin-bottom: 10px;margin-top: 5px;color: #212529;">To Find Out Inspirations</p>
+                    <ul style="margin-top: 10px;margin-bottom: 15px;">
+                        <li>Please use the filter on the left panel to include or exclude the pre-prints.</li>
+                        <li>Categorize&nbsp;pertinent&nbsp;articles in different repositories.&nbsp;</li>
+                        <li>Save or share the articles by repository.</li>
+                    </ul>
+                </li>
+                <li class="list-group-item" id="irrelevant-1">
+                    <p style="font-size: 18px;font-weight: bold;margin-bottom: 10px;margin-top: 5px;color: #212529;">To Read Main Stream Articles</p>
+                    <ul style="margin-top: 10px;margin-bottom: 15px;">
+                        <li>Please choose "High Citation Articles" on the left panel to show only&nbsp;mainstream&nbsp;articles.&nbsp;</li>
+                        <li>Save them to the repository.&nbsp;</li>
+                        <li>Cancel the "High Citation Articles" choice&nbsp;to&nbsp;compare the searching outcomes.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}

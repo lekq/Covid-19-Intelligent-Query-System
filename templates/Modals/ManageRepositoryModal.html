@@ -1,0 +1,110 @@
+{% macro exportHTML (project_info, repository_list) %}
+    <!-- Modal to manage repositories-->
+    <div class="modal fade" id="manageRepositoryModal" tabindex="-1" style = "z-index: 1051;" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div>
+                        <button type="button" class="close" data-dismiss="modal">
+                            &times;
+                        </button>
+                    </div>
+
+                    <form>
+                        <div class = "container p-3">
+                            <div class = "form-group">
+                                <label style = "font-weight: 900;" for= "projectTitle">Project Title</label>
+                                <input type="text" class="form-control" id="projectTitle" value = "{{project_info['project_name']}}" readonly>
+                            </div>
+
+                            <div class = "form-group">
+                                <label style = "font-weight: 900;" for= "repositoryList">Repositories</label>
+                                {% for repo_id in repository_list%}
+                                    {% set repo = repository_list[repo_id] %}
+                                    {% set repository_name_id = "repositoryName-" + (repo['repo_id'] | string) %}
+                                    {% set repository_row_id = "repositoryRow-" + (repo['repo_id'] | string) %}
+                                    <div class = "row" id = "{{repository_row_id}}">
+                                        <div class = "col-9">
+                                            <p id = "{{repository_name_id}}" >{{repo['repo_name']}}</p>
+                                        </div>
+                                        <div class = "col-3 p-0">
+                                            {% if repo['is_default'] %}
+                                            {% else %}
+                                                <button class = "btn btn-sm btn-link float-right" style = "background-color: rgb(221, 215, 215); color: rgb(77, 117, 204)" onclick = "openDeleteRepositoryModal ({{project_info['project_id']}}, {{repo['repo_id']}}); return false"> Delete </button>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+                
+                <div class="modal-footer">
+                    <div class = "form-group">
+                        <button class = "btn btn-primary btn-lg float-right" onclick = "location.reload()" class="close" data-dismiss="modal">
+                            Done
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+
+{% macro exportScript (project_info, repository_list) %}
+    <script>
+        function openManageRepositoryModal () {
+            $ ("#manageRepositoryModal").modal ("show")
+        }
+        function openDeleteRepositoryModal (project_id, repository_id) {
+            var repository_name_id = "#repositoryName-" + repository_id 
+            var repository_row_id = "#repositoryRow-" + repository_id 
+            var project_title_id = "#projectTitle"
+            var repository_name = $ (repository_name_id).text()
+            var project_name = $ (project_title_id).val ()
+            var action_title =  "Do you want to delete " + repository_name + " from " + project_name + "? "
+            var action_description = "Deleting a repository will result in removing all interested articles. Click Yes to proceed this deletion."
+            yes_function = function () {
+                $ ('#confirmActionButton').attr ('disabled', true)
+                $ ('#confirmActionModalSpinner').show ()
+                $.post('/delete_repository', {
+                    'project_id': project_id,
+                    'repo_id' : repository_id
+                })
+                .done (function (response) {
+                    $ ('#confirmActionModalSpinner').hide ()
+                    if ('success_msg' in response) {
+                        $ ("#confirmActionModalMessage").text ("Successfully delete your repository")
+                        $ ("#confirmActionModalMessage").css ("color", "green")
+                        $ ("#confirmActionModalMessage").show()
+                        $ ("#confirmActionModal").modal ("hide")
+                        $ (repository_row_id).remove()
+                        $ ("#manageRepositoryModal").modal ("show")
+                    } else {
+                        $ ('#confirmActionButton').attr ('disabled', false)
+                    }
+
+                })
+                .fail (function () {
+                    $ ('#confirmActionModalSpinner').hide ()
+                    $ ("#confirmActionModalMessage").text ("Fail to send your request. Please check your internet connection and try again")
+                    $ ("#confirmActionModalMessage").css ("color", "red")
+                    $ ("#confirmActionModalMessage").show()
+                    $ ('#confirmActionButton').attr ('disabled', false)
+
+                })
+            }
+
+            no_function = function () {
+                $ ("#manageRepositoryModal").modal ("show")
+            }
+
+            $ ("#manageRepositoryModal").modal ("hide")
+            openAskForConfirmationModal (action_title, action_description, yes_function, no_function) // function from Modals/ActionConfirmationModal.html
+
+        }
+    </script>
+{% endmacro %}

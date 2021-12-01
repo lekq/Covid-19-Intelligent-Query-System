@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>COVID-19 Data Explorer</title>
+    <link rel="stylesheet" href="/static/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/assets/fonts/fontawesome-all.min.css">
+    <link rel="stylesheet" href="/static/assets/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/assets/fonts/ionicons.min.css">
+    <link rel="stylesheet" href="/static/assets/fonts/fontawesome5-overrides.min.css">
+    <link rel="stylesheet" href="/static/assets/css/divider-text-middle.css">
+    <link rel="stylesheet" href="/static/assets/css/Footer-Clean.css">
+    <link rel="stylesheet" href="/static/assets/css/Login-Box-En.css">
+    <link rel="stylesheet" href="/static/assets/css/Navigation-with-Button.css">
+    <link rel="stylesheet" href="/static/assets/css/Navigation-with-Search.css">
+    <link rel="stylesheet" href="/static/assets/css/Newsletter-Subscription-Form.css">
+    <link rel="stylesheet" href="/static/assets/css/Sidebar-Menu-1.css">
+    <link rel="stylesheet" href="/static/assets/css/Sidebar-Menu.css">
+    <link rel="stylesheet" href="/static/assets/css/SIdebar-Responsive-2-1.css">
+    <link rel="stylesheet" href="/static/assets/css/SIdebar-Responsive-2.css">
+    <link rel="stylesheet" href="/static/assets/css/styles.css">
+
+    <script>
+      function change_font_color(){
+       alert({{task_id}});
+       document.getElementById({{task_id}}).style.color='red';  
+
+      }
+
+
+    </script>
+
+</head>
+
+<body onload='javascript:change_font_color()'>
+    <nav class="navbar navbar-light navbar-expand-md fixed-top navigation-clean-button" style="height: 60px;">
+        <div class="container"><a class="navbar-brand" href="http://www.uc.edu"><img src="/static/assets/img/UC_logo.png"></a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse"
+                id="navcol-1">
+                <ul class="nav navbar-nav mr-auto"></ul>
+                <ul class="nav navbar-nav">
+                    <li class="nav-item dropdown"><a class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false" href="#"><i class="far fa-bell"></i></a>
+                        <div class="dropdown-menu" role="menu"><a class="dropdown-item" role="presentation" href="#">DSC Process</a><a class="dropdown-item" role="presentation" href="#">Like</a><a class="dropdown-item" role="presentation" href="#">Share</a></div>
+                    </li>
+                </ul><span class="navbar-text actions"> <a class="btn btn-light border rounded action-button" role="button" href="#">My Repository</a><a class="btn btn-primary border rounded action-button" role="button" href="/logout">Logout</a></span></div>
+        </div>
+    </nav>
+    <div class="newsletter-subscribe" style="background-color: rgb(65,65,65);height: 60px;padding-bottom: 15px;margin-top: 60px;padding-top: 10px;margin-bottom: 15px;">
+        <div class="container">
+            <form class="form-inline d-lg-flex justify-content-lg-start" action="/search" method="post" style="height: 40px;">
+                <div class="form-group">
+                    <div class="dropdown">
+                    <input class="form-control" type="text" name="search_content" style="height: 31px;width: 350px;padding-right: 5px;padding-left: 5px;padding-top: 0px;padding-bottom: 0px;" placeholder="Enter free-text query / System ID / PMID"></div>
+                <div class="form-group"><button class="btn btn-primary" type="submit" style="padding-top: 10px;padding-bottom: 10px;">Search&nbsp;</button></div>
+            </form>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="card" style="margin-top: 10px;margin-bottom: 10px;margin-right: 10;">
+                    <div class="card-body">
+                        <h4 class="card-title" style="margin-bottom: 20px;">My Repository</h4>
+                        <hr>
+                        <p style="margin-bottom: 10px;" id='1'>Task 1</p>
+                        <p style="margin-bottom: 10px;" id='2'>Task 2</p>
+                        <p style="margin-bottom: 10px;" id='3'><a href="/search?search_content=567">Task 3</a></p>
+                        <p style="margin-bottom: 10px;" id='4'>Task 4</p>
+                        <p style="margin-bottom: 10px;" id='5'>Task 5</p>
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="row">
+                    <div class="col" style="padding: 15px 15px;padding-top: 30px;">
+                        <div class="row repositoryTitle" style="margin-bottom: 20px;">
+                            <div class="col-lg-5">
+                                <h4 style="margin-bottom: 10px;">Task {{task_id}}</h4>
+                                <h6 class="text-muted mb-2" style="margin-top: 0px;font-size: 14px;">Contributer: Myself</h6>
+                            </div>
+                        </div>
+                        <div role="tablist" id="accordion-1">
+                            <div class="card border-white">
+                                <div class="card-header" role="tab" style="background-color: rgb(233,236,239);">
+                                    <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="true" aria-controls="accordion-1 .item-1" href="#accordion-1 .item-1" style="font-size: 16px;font-weight: 400;">(Default) Division Name</a></h5>
+                                </div>
+                                <div class="collapse show item-1" role="tabpanel" data-parent="#accordion-1">
+                                    <div class="card-body">
+                                        <ul class="list-group" role="tabpanel" data-parent="#breadcrumb-1" style="margin-right: -20px;margin-left: -20px;">
+                                            <li class="list-group-item">
+                                                <h6 style="margin-bottom: 0px;"><a href="MyRepository-PreviewDocument.html"><span style="text-decoration: underline;">Journal Article: Title is Very Long&nbsp;Title is Very Long</span></a><button class="btn btn-primary btn-sm border rounded-0 border-light"
+                                                        type="button" style="background-color: #ad00ff;color: #ffffff;margin-right: 0px;margin-left: 20px;padding-top: 2px;padding-bottom: 2px;padding-right: 10px;padding-left: 10px;font-size: 12px;">Article ID</button><br></h6>
+                                                <small
+                                                    class="d-lg-flex justify-content-lg-start" style="color: #999999;">Author:</small><small class="d-lg-flex justify-content-lg-start" style="color: #999999;">Journal / Sources:</small><small class="d-lg-flex justify-content-lg-start" style="color: #999999;">Publish Time:</small></li>
+                                            <li
+                                                class="list-group-item">
+                                                <h6 style="margin-bottom: 0px;"><a href="#accordion-2 .item-1"><span style="text-decoration: underline;">Journal Article: Title is Very Long&nbsp;Title is Very Long</span></a><button class="btn btn-primary btn-sm border rounded-0 border-light"
+                                                        type="button" style="background-color: #ad00ff;color: #ffffff;margin-right: 0px;margin-left: 20px;padding-top: 2px;padding-bottom: 2px;padding-right: 10px;padding-left: 10px;font-size: 12px;">Article ID</button><br></h6>
+                                                <small
+                                                    class="d-lg-flex justify-content-lg-start" style="color: #999999;">Author:</small><small class="d-lg-flex justify-content-lg-start" style="color: #999999;">Journal / Sources:</small><small class="d-lg-flex justify-content-lg-start" style="color: #999999;">Publish Time:</small></li>
+                                                    <li
+                                                        class="list-group-item">
+                                                        <h6 style="margin-bottom: 0px;"><a href="#accordion-2 .item-1"><span style="text-decoration: underline;">Journal Article: Title is Very Long&nbsp;Title is Very Long</span></a><button class="btn btn-primary btn-sm border rounded-0 border-light"
+                                                                type="button" style="background-color: #ad00ff;color: #ffffff;margin-right: 0px;margin-left: 20px;padding-top: 2px;padding-bottom: 2px;padding-right: 10px;padding-left: 10px;font-size: 12px;">Article ID</button><br></h6>
+                                                        <small
+                                                            class="d-lg-flex justify-content-lg-start" style="color: #999999;">Author:</small><small class="d-lg-flex justify-content-lg-start" style="color: #999999;">Journal / Sources:</small><small class="d-lg-flex justify-content-lg-start" style="color: #999999;">Publish Time:</small></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-clean">
+        <footer>
+            <div class="container">
+                <div class="row justify-content-center">
+
+                 <div class="col-sm-4 col-md-3 item">
+                        <h3>COVID-19 Resource</h3>
+                        <ul>
+                            <li><a href="https://icite.od.nih.gov/covid19/search/">COVID-19 Protfolio(NIH)</a></li>
+                            <li><a href="https://ir.nist.gov/covidSubmit/">TREC-COVID</a></li>
+                            <li><a href="https://www.semanticscholar.org/cord19">CORD-19 Research Dataset</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-sm-4 col-md-3 item">
+                        <h3>About</h3>
+                        <ul>
+                            <li><a href="https://www.uc.edu">University of Cincinnati</a></li>
+                            <li><a href="https://med.uc.edu/bmi/labs/iCDCU">iCDCU Lab</a></li>
+                            <li><a href="https://www.uchealth.com/">UC Health</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-sm-4 col-md-3 item">
+                        <h3>Publication</h3>
+                        <ul>
+                            <li><a href="https://trec.nist.gov/pubs/trec27/papers/MedIER-PM.pdf">TREC-PM 2018</a></li>
+                            <li><a href="https://trec.nist.gov/pubs/trec28/papers/CincyMedIR.PM.pdf">TREC-PM 2019</a></li>
+
+                        </ul>
+                    </div>
+
+
+
+                    <div class="col-lg-3 item social"><a href="#"><i class="icon ion-social-facebook"></i></a><a href="#"><i class="icon ion-social-twitter"></i></a><a href="#"><i class="icon ion-social-snapchat"></i></a><a href="#"><i class="icon ion-social-instagram"></i></a>
+                        <p class="copyright">iCDCU © 2020</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        </div>
+    </div>
+    <script src="/static/assets/js/jquery.min.js"></script>
+    <script src="/static/assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/static/assets/js/Sidebar-Menu.js"></script>
+</body>
+
+</html>

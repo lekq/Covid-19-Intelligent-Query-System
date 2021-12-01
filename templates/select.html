@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<title>Patient Portal</title>
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+		<meta name="description" content="">
+		<meta name="author" content="">
+		
+		<script type="text/javascript" src="/static/js/jquery-3.3.1.min.js"></script>
+		<script type="text/javascript" src="/static/js/jquery.blockUI.js"></script>
+		<script src="/static/js/bootstrap.min.js"></script>
+		<!-- Latest compiled and minified Bootstrap CSS -->
+		<link rel="stylesheet" href="/static/css/bootstrap.min.css">
+
+		<style>
+			body {
+			padding-top: 1em;
+			}	
+			
+			section {
+				padding: 70px 0;
+				border-bottom: 1px dotted #ccc;
+			}
+
+			/* So that we can see the grid */
+			.grid-example  div[class^="col"] {
+				border: 1px solid white;
+				background: white;
+				text-align: center;
+				padding-top: 8px;
+				padding-bottom: 8px;
+				}
+			/* Overide Jumbotron's color */
+			.jumbotron {
+			background-color: lightskyblue;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container-fluid">
+				
+		<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#nav-content" aria-controls="nav-content" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+
+			<!-- Brand -->
+			<a class="navbar-brand" href="#"><img src="https://d28htnjz2elwuj.cloudfront.net/wp-content/uploads/2013/11/University_of_Cincinnati_logo.jpg" width="150" height="50">&nbsp&nbsp<img src="http://blog.cincinnatichildrens.org/wp-content/uploads/2016/04/Logo-High-Res.jpeg" width="150" height="50"></a>
+
+			<div class="collapse navbar-collapse justify-content-end" id="nav-content">   
+				<ul class="navbar-nav">
+					<li class="nav-item">
+						<a class="nav-link" href="#"><font size="12" color='red'>Patient Portal</font></a>
+					</li>
+					
+				</ul>
+			</div>
+			<div class="collapse navbar-collapse justify-content-end" id="nav-content">   
+				<ul class="navbar-nav">
+					<li class="nav-item">
+						<a class="nav-link disabled" href="#"><font color='white'>Welcome<div id='w_name'></div></font></a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/logout">Logout</a>
+					</li>
+				</ul>
+			</div>
+		</nav>
+
+		</div>
+		
+		</br></br>
+		<div class="container-fluid">
+				<div class="grid-example">
+					<div class="row">
+						<!-- <div class="col-sm-1" style="margin-top: 5px"><label class="mr-sm-1 mb-0" for="filetype">Patient:</label></div>
+						<div id='p_name' class="col-sm-1">
+						</div> -->
+                                                <div id='b_year' class="col-sm-1">
+                                                   Birth Year: 1998
+                                                </div>
+                                                <div id='p_gender' class="col-sm-1">
+                                                   Gender: Male
+                                                </div>
+                                                <div id='p_city' class="col-sm-1">
+                                                   City:<br>Cincinnati
+                                                </div>
+                                                <div id='p_state' class="col-sm-1">
+                                                   State:OH
+                                                </div>
+                                                <div id='p_phone' class="col-sm-1">
+                                                   Phone:<br>513-558-2018
+                                                </div>
+ 
+                                         </form>
+					</div>
+				</div>
+			
+		</div>
+		<div id='data_table' style='margin:20px;'>
+			<!-- data table content-->
+                
+		</div>
+	</body>
+</html>
+
+
+<script language="javascript" type="text/javascript">
+
+
+	jQuery(document).ready(function(){
+		// initialization
+		jQuery(function () {
+		  jQuery('[data-toggle="tooltip"]').tooltip()
+		})
+
+		// Initialize popover component
+		jQuery(function () {
+		  jQuery('[data-toggle="popover"]').popover()
+		})
+
+		//custom actions
+		jQuery('#customFile').on('change',function(){
+        });
+        writeTable();
+
+		jQuery('#upload_filetype').on('change',function(){
+		});
+	});
+
+
+	function writeTable() {
+                var json_source={{ patient_info|tojson }};
+                var fileTable = "<table class='table table-hover'>";
+                  var keys=Object.keys(json_source);
+
+                  for(j=0;j<keys.length;j++){
+                    var o1=JSON.parse(json_source[keys[j]]);
+                    var keys1=Object.keys(o1);
+                    if (o1[keys1[0]]!="" && keys1[3]!="Birth Year"){
+                     fileTable+="<thead class='thead-light'><tr>"
+                     for (i=0;i<keys1.length;i++){
+                      fileTable += "<th>"+keys1[i]+"</th>";
+                     }
+                     fileTable += "</tr></thead><tr>";
+                     
+                     for (i=0;i<keys1.length;i++){
+                      fileTable += "<td>"+o1[keys1[i]]+"</td>";
+                    }
+                  }
+                }                
+                fileTable += "</tr>";
+                
+		fileTable += "</tbody></table>";
+		jQuery('#data_table').html(fileTable);
+
+                for (var i = 0; i <  Object.keys(json_source).length; i++){
+                  // look for the entry with a matching `code` value
+                   var o2=JSON.parse(json_source[keys[i]]);
+                   var keys2=Object.keys(o2);
+                   if (keys2[3]=="Birth Year"){
+                     var age=2020-parseInt(o2[keys2[3]]); 
+                     var birth_y="Birth Year (age): "+o2[keys2[3]]+" ("+age+")";
+                     jQuery('#b_year').html(birth_y); 
+                   }
+                    if (keys2[1]=="Patient"){
+                       var name=o2[keys2[1]];
+                       jQuery('#w_name').html(name); 
+                   }
+                    if (keys2[2]=="Gender"){
+                     var gender="Gender: "+o2[keys2[2]];
+                     jQuery('#p_gender').html(gender); 
+                   }
+                    if (keys2[0]=="City"){
+                     var city="City: "+o2[keys2[0]];
+                     jQuery('#p_city').html(city); 
+                   }
+                   if (keys2[5]=="State"){
+                     var state="State: "+o2[keys2[5]];
+                     jQuery('#p_state').html(state);
+                   }
+                    if (keys2[4]=="Phone"){
+                     var phone="Phone:<br> "+o2[keys2[4]];
+                     jQuery('#p_phone').html(phone);
+                   }
+
+             
+	       }
+        }
+</script>

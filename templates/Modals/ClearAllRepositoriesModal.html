@@ -1,0 +1,44 @@
+{% import './Modals/ActionConfirmationModal.html' as confirmActionModal %}
+
+{% macro exportHTML () %}
+    {{ confirmActionModal.exportHTML() }}
+{% endmacro %}
+
+{% macro exportScript (redirect_location) %}
+    <script>
+        function openClearAllRepositoriesModal (project_info) {
+            var action_title =  "Do you want to clear all repositories in project " + project_info['project_name'] + "?"
+            var action_description = "Clearing all repositories will result in removing all articles from but not deleting such repositories. Click Yes to proceed this action "
+            request_function = function () {
+                $ ('#confirmActionButton').attr ('disabled', true)
+                $ ('#confirmActionModalSpinner').show ()
+                $.post('/clear_all_repositories', {
+                    'project_id': project_info['project_id']
+                })
+                .done (function (response) {
+                    $ ('#confirmActionModalSpinner').hide ()
+                    if ('success_msg' in response) {
+                        $("#confirmActionModalMessage").text ("Successfully execute your action. Autofresh will happen in 5 seconds")
+                        $("#confirmActionModalMessage").css ("color", "green")
+                        $("#confirmActionModalMessage").show()
+                        setTimeout (function () {}, 5000)
+                        window.location = "{{redirect_location}}"
+                    } else {
+                        $ ('#confirmActionButton').attr ('disabled', false)
+                    }
+
+                })
+                .fail (function () {
+                    $ ('#confirmActionModalSpinner').hide ()
+                    $ ('#confirmActionButton').attr ('disabled', false)
+                    $("#confirmActionModalMessage").text ("Fail to send your request. Please check your internet connection and try again")
+                    $("#confirmActionModalMessage").css ("color", "red")
+                    $("#confirmActionModalMessage").show()
+                    this.attr ("disabled", false)
+
+                })
+            }
+            openAskForConfirmationModal (action_title, action_description, request_function) // function from Modals/ActionConfirmationModal.html
+        }
+    </script>
+{% endmacro %}
