@@ -1,1 +1,1 @@
-# 202004_COVID-IQS
+# Covid-19 Intelligent Query System
